@@ -6,6 +6,22 @@ class Booking_model {
         $this->db = new Database;
     }
 
+    public function getTodayBookings($branch_id) {
+    $today = date('Y-m-d');
+    
+    // Query untuk mengambil booking yang tanggal start_time-nya adalah hari ini
+    $query = "SELECT * FROM bookings 
+              WHERE branch_id = :branch_id 
+              AND DATE(start_time) = :today 
+              AND payment_status != 'Cancelled'";
+              
+    $this->db->query($query);
+    $this->db->bind('branch_id', $branch_id);
+    $this->db->bind('today', $today);
+    
+    return $this->db->resultSet();
+    }
+
     // CEK KETERSEDIAAN (LOGIKA INTI)
     public function checkAvailability($table_id, $date, $time, $duration) {
         $start_time = $date . ' ' . $time . ':00';
