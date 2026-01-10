@@ -1,0 +1,9 @@
+Options -Multiviews
+RewriteEngine On
+
+# Abaikan jika file atau folder aslinya memang ada (seperti gambar/css)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Arahkan semua sisanya ke index.php
+RewriteRule ^(.*)$ index.php?url=$1 [L,QSA]
