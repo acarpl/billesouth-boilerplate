@@ -3,7 +3,11 @@ class Billing extends Controller {
 
     public function __construct() {
         parent::__construct();
-        // Authentication check can be added here
+        // Proteksi Admin: Hanya yang punya role admin boleh masuk
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] == 'member') {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
     }
 
     // Method untuk menampilkan halaman billing/active tables

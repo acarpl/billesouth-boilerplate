@@ -17,9 +17,9 @@ class User_model {
 
     // Simpan user baru (Register)
     public function registerUser($data) {
-        $query = "INSERT INTO users (name, email, password, phone, role) 
+        $query = "INSERT INTO users (name, email, password, phone, role)
                   VALUES (:name, :email, :password, :phone, 'member')";
-        
+
         $this->db->query($query);
         $this->db->bind('name', $data['name']);
         $this->db->bind('email', $data['email']);
@@ -29,5 +29,11 @@ class User_model {
 
         $this->db->execute();
         return $this->db->rowCount();
+    }
+
+    // Method untuk mendapatkan semua member
+    public function getAllMembers() {
+        $this->db->query("SELECT * FROM " . $this->table . " WHERE role = 'member'");
+        return $this->db->resultSet();
     }
 }
