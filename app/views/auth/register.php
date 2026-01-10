@@ -1,57 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title><?= $data['judul']; ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-black flex items-center justify-center min-h-screen py-10">
-
-    <div class="bg-gray-900 p-8 rounded-lg shadow-xl w-96 border border-gray-800">
-        <h2 class="text-3xl font-bold text-white mb-2 text-center tracking-widest">BILLE</h2>
-        <p class="text-gray-500 text-center text-sm mb-8">Create your membership</p>
-        
-        <form action="<?= BASEURL; ?>/auth/processRegister" method="POST">
-            <div class="mb-4">
-                <label class="block text-gray-400 text-sm mb-2">Nama Lengkap</label>
-                <input type="text" name="name" required placeholder="John Doe"
-                    class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-white">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black p-4">
+    <div class="w-full max-w-md bg-gray-900 rounded-2xl shadow-xl overflow-hidden border border-gray-800">
+        <div class="p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-white tracking-[0.2em]">BILLE</h1>
+                <p class="text-gray-400 mt-2">ADMIN REGISTRATION</p>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-400 text-sm mb-2">WhatsApp Number</label>
-                <input type="text" name="phone" required placeholder="08123xxx"
-                    class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-white">
-            </div>
+            <!-- Success/Error Messages -->
+            <?php if (isset($_SESSION['flash_message'])): ?>
+                <div class="mb-6 p-4 rounded-lg <?php echo $_SESSION['flash_type'] === 'success' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'; ?> border <?php echo $_SESSION['flash_type'] === 'success' ? 'border-green-500' : 'border-red-500'; ?>">
+                    <?php echo $_SESSION['flash_message']; ?>
+                    <?php unset($_SESSION['flash_message']); unset($_SESSION['flash_type']); ?>
+                </div>
+            <?php endif; ?>
 
-            <div class="mb-4">
-                <label class="block text-gray-400 text-sm mb-2">Email</label>
-                <input type="email" name="email" required placeholder="john@example.com"
-                    class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-white">
-            </div>
-            
-            <div class="mb-4">
-                <label class="block text-gray-400 text-sm mb-2">Password</label>
-                <input type="password" name="password" required
-                    class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-white">
-            </div>
+            <form action="<?= BASEURL; ?>/auth/register_process" method="POST">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                    <input type="text" name="name" id="name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3" placeholder="Enter your full name" required>
+                </div>
 
-            <div class="mb-6">
-                <label class="block text-gray-400 text-sm mb-2">Konfirmasi Password</label>
-                <input type="password" name="confirm_password" required
-                    class="w-full p-3 rounded bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-white">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" name="email" id="email" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3" placeholder="Enter your email" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                    <input type="tel" name="phone" id="phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3" placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input type="password" name="password" id="password" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-3" placeholder="Create a password (min 6 characters)" required>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                    REGISTER ACCOUNT
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-500">
+                    Already have an account? 
+                    <a href="<?= BASEURL; ?>/auth" class="text-blue-500 hover:text-blue-400 font-medium">Sign In</a>
+                </p>
             </div>
-            
-            <button type="submit" 
-                class="w-full bg-white text-black font-bold py-3 rounded hover:bg-gray-200 transition">
-                CREATE ACCOUNT
-            </button>
-        </form>
-        
-        <p class="text-gray-500 text-xs mt-6 text-center">
-            Sudah punya akun? <a href="<?= BASEURL; ?>/auth" class="text-white">Login</a>
-        </p>
+        </div>
     </div>
-
-</body>
-</html>
+</div>

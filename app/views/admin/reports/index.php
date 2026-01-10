@@ -1,0 +1,139 @@
+<div class="flex">
+    <!-- Sidebar -->
+    <?php $this->view('templates/admin_sidebar'); ?>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-white">Revenue Reports</h1>
+            <p class="text-gray-400">Analyze your billiard parlor revenue and sales</p>
+        </div>
+
+        <!-- Revenue Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-500/20 mr-4">
+                        <i class="fas fa-calendar-day text-blue-500 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Today's Revenue</p>
+                        <p class="text-2xl font-bold text-white">
+                            <?php if($daily_revenue): ?>
+                                Rp <?= number_format($daily_revenue->total_revenue, 0, ',', '.'); ?>
+                            <?php else: ?>
+                                Rp 0
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-500/20 mr-4">
+                        <i class="fas fa-calendar-week text-green-500 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">This Month's Revenue</p>
+                        <p class="text-2xl font-bold text-white">
+                            <?php if($monthly_revenue): ?>
+                                Rp <?= number_format($monthly_revenue->total_revenue, 0, ',', '.'); ?>
+                            <?php else: ?>
+                                Rp 0
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-500/20 mr-4">
+                        <i class="fas fa-calendar-alt text-purple-500 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">This Year's Revenue</p>
+                        <p class="text-2xl font-bold text-white">
+                            <?php if($yearly_revenue): ?>
+                                Rp <?= number_format($yearly_revenue->total_revenue, 0, ',', '.'); ?>
+                            <?php else: ?>
+                                Rp 0
+                            <?php endif; ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Selling Products -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                <h2 class="text-xl font-bold text-white mb-4">Top Selling Products</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-400">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-800">
+                            <tr>
+                                <th class="px-4 py-3">Product</th>
+                                <th class="px-4 py-3">Quantity Sold</th>
+                                <th class="px-4 py-3">Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach($top_products as $product): ?>
+                            <tr class="border-b border-gray-800 hover:bg-gray-850">
+                                <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($product->name); ?></td>
+                                <td class="px-4 py-3"><?= $product->total_quantity; ?></td>
+                                <td class="px-4 py-3">Rp <?= number_format($product->total_revenue, 0, ',', '.'); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                            
+                            <?php if(empty($top_products)): ?>
+                            <tr>
+                                <td colspan="3" class="px-4 py-3 text-center text-gray-500">No sales data available</td>
+                            </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Report Selection -->
+            <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
+                <h2 class="text-xl font-bold text-white mb-4">Generate Reports</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-lg font-medium text-white mb-2">Daily Report</h3>
+                        <form action="<?= BASEURL; ?>/admin/reports/daily" method="GET" class="flex">
+                            <input type="date" name="date" value="<?= date('Y-m-d'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
+                                View
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium text-white mb-2">Monthly Report</h3>
+                        <form action="<?= BASEURL; ?>/admin/reports/monthly" method="GET" class="flex">
+                            <input type="month" name="month" value="<?= date('Y-m'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
+                                View
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium text-white mb-2">Yearly Report</h3>
+                        <form action="<?= BASEURL; ?>/admin/reports/yearly" method="GET" class="flex">
+                            <input type="number" name="year" value="<?= date('Y'); ?>" min="2020" max="<?= date('Y'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
+                                View
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

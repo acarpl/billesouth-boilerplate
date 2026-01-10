@@ -1,128 +1,116 @@
 <?php
-
 class Auth extends Controller {
 
-    /**
-     * Halaman Utama Auth (Menampilkan Login)
-     * Akses: bille.id/auth
-     */
+    public function __construct() {
+        parent::__construct();
+    }
+
     public function index() {
-        // Jika user sudah login, arahkan ke home sesuai role agar tidak login ulang
-        if (isset($_SESSION['user_id'])) {
-            $this->redirectBasedOnRole($_SESSION['user_role']);
-        }
-
         $data['judul'] = 'Login - Bille Billiards';
+        
+        $this->view('templates/header', $data);
         $this->view('auth/login', $data);
+        $this->view('templates/footer');
     }
 
-    /**
-     * Halaman Register
-     * Akses: bille.id/auth/register
-     */
-    public function register() {
-        $data['judul'] = 'Register - Bille Billiards';
-        $this->view('auth/register', $data);
-    }
-
-    /**
-     * Proses Login (Handling POST)
-     */
     public function login() {
+        $userModel = $this->model('User_model');
+        
+        // Validasi input
+        if(empty($_POST['email']) || empty($_POST['password'])) {
+            Flasher::setFlash('error', 'Email dan password harus diisi');
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
+        
         $email = $_POST['email'];
         $password = $_POST['password'];
-
-        $user = $this->model('User_model')->getUserByEmail($email);
-
-        if ($user) {
-            // Verifikasi Password Hash
-            if (password_verify($password, $user->password)) {
-                
-                // Set Session Data
-                $_SESSION['user_id']   = $user->id;
-                $_SESSION['user_name'] = $user->name;
-                $_SESSION['user_role'] = $user->role;
-                $_SESSION['branch_id'] = $user->branch_id; // Khusus admin cabang
-
-                // Redirect berdasarkan role
-                $this->redirectBasedOnRole($user->role);
-
+        
+        // Cek user di database
+        $user = $userModel->getUserByEmail($email);
+        
+        if($user && password_verify($password, $user->password)) {
+            // Set session
+            session_start();
+            $_SESSION['user_id'] = $user->id;
+            $_SESSION['user_name'] = $user->name;
+            $_SESSION['user_role'] = $user->role;
+            
+            // Redirect berdasarkan role
+            if($user->role == 'admin') {
+                header('Location: ' . BASEURL . '/admin');
             } else {
-                // Password Salah
-                $this->showAlert('Password yang Anda masukkan salah!', BASEURL . '/auth');
+                header('Location: ' . BASEURL . '/home');
             }
+            exit;
         } else {
-            // Email Tidak Terdaftar
-            $this->showAlert('Email tidak ditemukan!', BASEURL . '/auth');
+            Flasher::setFlash('error', 'Email atau password salah');
+            header('Location: ' . BASEURL . '/auth');
+            exit;
         }
     }
 
-    /**
-     * Proses Registrasi (Handling POST)
-     */
-    public function processRegister() {
-        $name             = $_POST['name'];
-        $email            = $_POST['email'];
-        $phone            = $_POST['phone'];
-        $password         = $_POST['password'];
-        $confirm_password = $_POST['confirm_password'];
-
-        // 1. Validasi Password Match
-        if ($password !== $confirm_password) {
-            $this->showAlert('Konfirmasi password tidak cocok!', BASEURL . '/auth/register');
-            exit;
-        }
-
-        // 2. Cek apakah email sudah ada di database
-        if ($this->model('User_model')->getUserByEmail($email)) {
-            $this->showAlert('Email sudah terdaftar, silakan gunakan email lain.', BASEURL . '/auth/register');
-            exit;
-        }
-
-        // 3. Siapkan data untuk dikirim ke model
-        $data = [
-            'name'     => $name,
-            'email'    => $email,
-            'phone'    => $phone,
-            'password' => $password
-        ];
-
-        // 4. Eksekusi Register melalui Model
-        if ($this->model('User_model')->registerUser($data) > 0) {
-            $this->showAlert('Pendaftaran berhasil! Silakan login.', BASEURL . '/auth');
-        } else {
-            $this->showAlert('Terjadi kesalahan saat mendaftar, coba lagi nanti.', BASEURL . '/auth/register');
-        }
-    }
-
-    /**
-     * Proses Logout
-     */
     public function logout() {
-        session_unset();
+        session_start();
         session_destroy();
-        header('Location: ' . BASEURL . '/auth');
+        header('Location: ' . BASEURL . '/home');
         exit;
     }
 
-    /**
-     * Helper: Alert sederhana menggunakan JS
-     */
-    private function showAlert($message, $redirect) {
-        echo "<script>
-                alert('$message');
-                window.location.href = '$redirect';
-              </script>";
+    public function register() {
+        $data['judul'] = 'Register - Bille Billiards';
+        
+        $this->view('templates/header', $data);
+        $this->view('auth/register', $data);
+        $this->view('templates/footer');
     }
 
-    /**
-     * Helper: Pengalihan halaman berdasarkan hak akses
-     */
-    private function redirectBasedOnRole($role) {
-        if ($role == 'super_admin' || $role == 'branch_admin') {
-            header('Location: ' . BASEURL . '/admin');
+    public function register_process() {
+        $userModel = $this->model('User_model');
+        
+        // Validasi input
+        if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['phone'])) {
+            Flasher::setFlash('error', 'Semua field harus diisi');
+            header('Location: ' . BASEURL . '/auth/register');
+            exit;
+        }
+        
+        // Validasi format email
+        if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            Flasher::setFlash('error', 'Format email tidak valid');
+            header('Location: ' . BASEURL . '/auth/register');
+            exit;
+        }
+        
+        // Validasi panjang password
+        if(strlen($_POST['password']) < 6) {
+            Flasher::setFlash('error', 'Password minimal 6 karakter');
+            header('Location: ' . BASEURL . '/auth/register');
+            exit;
+        }
+        
+        // Cek apakah email sudah terdaftar
+        if($userModel->getUserByEmail($_POST['email'])) {
+            Flasher::setFlash('error', 'Email sudah terdaftar');
+            header('Location: ' . BASEURL . '/auth/register');
+            exit;
+        }
+        
+        // Siapkan data untuk registrasi
+        $data = [
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'password' => $_POST['password'],
+            'phone' => $_POST['phone']
+        ];
+        
+        // Registrasi user
+        if($userModel->registerUser($data)) {
+            Flasher::setFlash('success', 'Registrasi berhasil, silakan login');
+            header('Location: ' . BASEURL . '/auth');
         } else {
-            header('Location: ' . BASEURL . '/home');
+            Flasher::setFlash('error', 'Registrasi gagal');
+            header('Location: ' . BASEURL . '/auth/register');
         }
         exit;
     }
