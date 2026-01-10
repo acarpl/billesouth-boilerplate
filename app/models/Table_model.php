@@ -18,4 +18,12 @@ class Table_model {
         $this->db->bind('id', $id);
         return $this->db->single();
     }
+
+    public function updateStatus($id, $status) {
+    $this->db->query("UPDATE tables SET status = :status WHERE id = :id");
+    $this->db->bind('status', $status);
+    $this->db->bind('id', $id);
+    $this->db->execute();
+    return $this->db->rowCount();
+}
 }
