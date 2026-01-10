@@ -1,5 +1,5 @@
 <?php
-define('BASEURL', 'http://localhost/billesouth-boilerpalte/public');
+define('BASEURL', 'http://localhost/billesouth-boilerplate/public');
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
