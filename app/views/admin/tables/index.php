@@ -61,8 +61,8 @@
                     <?php foreach($tables as $table): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="px-4 py-3 font-medium text-white">#<?= htmlspecialchars($table->table_number); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($table->branch_name); ?></td>
-                        <td class="px-4 py-3">Rp <?= number_format($table->price_per_hour, 0, ',', '.'); ?>/hour</td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($table->branch_name ?? 'Unknown Branch'); ?></td>
+                        <td class="px-4 py-3">Rp <?= number_format($table->price_per_hour ?? 0, 0, ',', '.'); ?>/hour</td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php

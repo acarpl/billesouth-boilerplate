@@ -54,7 +54,6 @@
                         <th class="px-4 py-3">Category</th>
                         <th class="px-4 py-3">Price</th>
                         <th class="px-4 py-3">Stock</th>
-                        <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
@@ -85,11 +84,13 @@
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($product->is_active): echo 'bg-green-500/20 text-green-500';
+                                    $stock = $product->stock ?? 0;
+                                    if($stock > 10): echo 'bg-green-500/20 text-green-500';
+                                    elseif($stock > 0): echo 'bg-yellow-500/20 text-yellow-500';
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= $product->is_active ? 'Active' : 'Inactive'; ?>
+                                <?= $stock; ?> left
                             </span>
                         </td>
                         <td class="px-4 py-3">

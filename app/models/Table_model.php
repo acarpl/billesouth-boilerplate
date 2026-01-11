@@ -8,42 +8,62 @@ class Table_model {
     }
 
     public function getAll() {
-        $this->db->query("SELECT * FROM " . $this->table . " ORDER BY id ASC");
+        $this->db->query("SELECT t.*, b.branch_name
+                          FROM " . $this->table . " t
+                          LEFT JOIN branches b ON t.branch_id = b.id
+                          ORDER BY t.id ASC");
         return $this->db->resultSet();
     }
 
     public function getTablesByBranch($branch_id) {
-        $this->db->query("SELECT * FROM " . $this->table . " WHERE branch_id = :id");
+        $this->db->query("SELECT t.*, b.branch_name
+                          FROM " . $this->table . " t
+                          LEFT JOIN branches b ON t.branch_id = b.id
+                          WHERE t.branch_id = :id");
         $this->db->bind('id', $branch_id);
         return $this->db->resultSet();
     }
 
     public function getTableById($id) {
-        $this->db->query("SELECT * FROM " . $this->table . " WHERE id = :id");
+        $this->db->query("SELECT t.*, b.branch_name
+                          FROM " . $this->table . " t
+                          LEFT JOIN branches b ON t.branch_id = b.id
+                          WHERE t.id = :id");
         $this->db->bind('id', $id);
         return $this->db->single();
     }
 
     // Method untuk mendapatkan tabel aktif (sedang digunakan)
     public function getActiveTables($branch_id = null) {
-        $sql = "SELECT t.*, b.branch_name,
-                       CASE
-                           WHEN bkt.id IS NOT NULL THEN 'occupied'
-                           ELSE t.status
-                       END as table_status
-                FROM " . $this->table . " t
-                JOIN branches b ON t.branch_id = b.id
-                LEFT JOIN bookings bkt ON t.id = bkt.table_id
-                    AND bkt.payment_status = 'Paid'
-                    AND bkt.start_time <= NOW()
-                    AND bkt.end_time >= NOW()
-                ";
-
         if ($branch_id) {
-            $sql .= " WHERE t.branch_id = :branch_id";
+            $sql = "SELECT t.*, b.branch_name,
+                           CASE
+                               WHEN bkt.id IS NOT NULL THEN 'occupied'
+                               ELSE t.status
+                           END as table_status
+                    FROM " . $this->table . " t
+                    JOIN branches b ON t.branch_id = b.id
+                    LEFT JOIN bookings bkt ON t.id = bkt.table_id
+                        AND bkt.payment_status = 'Paid'
+                        AND bkt.start_time <= NOW()
+                        AND bkt.end_time >= NOW()
+                    WHERE t.branch_id = :branch_id";
+
             $this->db->query($sql);
             $this->db->bind('branch_id', $branch_id);
         } else {
+            $sql = "SELECT t.*, b.branch_name,
+                           CASE
+                               WHEN bkt.id IS NOT NULL THEN 'occupied'
+                               ELSE t.status
+                           END as table_status
+                    FROM " . $this->table . " t
+                    JOIN branches b ON t.branch_id = b.id
+                    LEFT JOIN bookings bkt ON t.id = bkt.table_id
+                        AND bkt.payment_status = 'Paid'
+                        AND bkt.start_time <= NOW()
+                        AND bkt.end_time >= NOW()";
+
             $this->db->query($sql);
         }
 
@@ -51,7 +71,10 @@ class Table_model {
     }
 
     public function getById($id) {
-        $this->db->query("SELECT * FROM " . $this->table . " WHERE id = :id");
+        $this->db->query("SELECT t.*, b.branch_name
+                          FROM " . $this->table . " t
+                          LEFT JOIN branches b ON t.branch_id = b.id
+                          WHERE t.id = :id");
         $this->db->bind('id', $id);
         return $this->db->single();
     }
@@ -79,6 +102,17 @@ class Table_model {
 
         $this->db->execute();
         return $this->db->rowCount() > 0;
+    }
+
+    public function getTotalTables($branch_id = null) {
+        if ($branch_id) {
+            $this->db->query("SELECT COUNT(*) as total FROM " . $this->table . " WHERE branch_id = :branch_id");
+            $this->db->bind('branch_id', $branch_id);
+        } else {
+            $this->db->query("SELECT COUNT(*) as total FROM " . $this->table);
+        }
+        $result = $this->db->single();
+        return $result->total;
     }
 
     public function delete($id) {

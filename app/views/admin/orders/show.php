@@ -132,7 +132,7 @@
                     <div class="border-t border-gray-800 pt-4">
                         <div class="flex justify-between font-bold text-lg text-white">
                             <span>Total:</span>
-                            <span>Rp <?= number_format($order->total_amount, 0, ',', '.'); ?></span>
+                            <span>Rp <?= number_format($order->grand_total, 0, ',', '.'); ?></span>
                         </div>
                     </div>
                 </div>

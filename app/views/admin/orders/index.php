@@ -47,7 +47,7 @@
                         <th class="px-4 py-3">Customer</th>
                         <th class="px-4 py-3">Date</th>
                         <th class="px-4 py-3">Total</th>
-                        <th class="px-4 py-3">Payment</th>
+                        <th class="px-4 py-3">Payment Method</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
@@ -57,27 +57,33 @@
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="px-4 py-3 font-medium text-white">#<?= $order->id; ?></td>
                         <td class="px-4 py-3"><?= htmlspecialchars($order->customer_name ?? 'Guest'); ?></td>
-                        <td class="px-4 py-3"><?= date('M d, Y H:i', strtotime($order->created_at)); ?></td>
-                        <td class="px-4 py-3">Rp <?= number_format($order->total_amount, 0, ',', '.'); ?></td>
+                        <td class="px-4 py-3"><?= isset($order->created_at) && !empty($order->created_at) ? date('M d, Y H:i', strtotime($order->created_at)) : 'N/A'; ?></td>
+                        <td class="px-4 py-3">Rp <?= number_format($order->grand_total ?? 0, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
-                                    if($order->payment_status == 'paid'): echo 'bg-green-500/20 text-green-500';
-                                    elseif($order->payment_status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
-                                    else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
-                                ?>">
-                                <?= ucfirst($order->payment_status); ?>
-                            </span>
+                            <?= htmlspecialchars(ucwords(str_replace('_', ' ', $order->payment_method ?? 'N/A'))); ?>
                         </td>
                         <td class="px-4 py-3">
                             <form method="POST" action="<?= BASEURL; ?>/admin/orders/updateStatus/<?= $order->id; ?>" class="inline">
+                                <?php
+                                    $status_classes = [
+                                        'Paid' => 'bg-green-500/20 text-green-500',
+                                        'Pending' => 'bg-yellow-500/20 text-yellow-500',
+                                        'Processing' => 'bg-blue-500/20 text-blue-500',
+                                        'Shipped' => 'bg-purple-500/20 text-purple-500',
+                                        'Delivered' => 'bg-teal-500/20 text-teal-500',
+                                        'Cancelled' => 'bg-red-500/20 text-red-500'
+                                    ];
+
+                                ?>
                                 <select name="status" onchange="this.form.submit()" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 text-xs p-1">
-                                    <option value="pending" <?= $order->status == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                    <option value="processing" <?= $order->status == 'processing' ? 'selected' : ''; ?>>Processing</option>
-                                    <option value="shipped" <?= $order->status == 'shipped' ? 'selected' : ''; ?>>Shipped</option>
-                                    <option value="delivered" <?= $order->status == 'delivered' ? 'selected' : ''; ?>>Delivered</option>
-                                    <option value="cancelled" <?= $order->status == 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                    <?php
+                                        $statuses = ['Paid', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+                                        foreach($statuses as $status):
+                                            $selected = ($order->status === $status) ? 'selected' : '';
+                                            $classes = $status_classes[$status] ?? 'bg-gray-500/20 text-gray-500';
+                                    ?>
+                                        <option value="<?= $status; ?>" class="<?= $classes; ?>" <?= $selected; ?>><?= $status; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </form>
                         </td>

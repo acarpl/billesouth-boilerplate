@@ -15,6 +15,8 @@
             <a href="<?= BASEURL; ?>/admin/inventory" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-box w-8"></i> Shop / Inventory
             </a>
+
+            <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
             <div class="border-t border-gray-800 my-4"></div>
             <a href="<?= BASEURL; ?>/admin/branches" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-store w-8"></i> Branches
@@ -34,6 +36,8 @@
             <a href="<?= BASEURL; ?>/admin/reports" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-chart-bar w-8"></i> Reports
             </a>
+            <?php endif; ?>
+
             <a href="<?= BASEURL; ?>/auth/logout" class="flex items-center text-red-500 hover:text-red-400 px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-right-from-bracket w-8"></i> Logout
             </a>

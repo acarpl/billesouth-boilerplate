@@ -53,6 +53,12 @@ class Branch_model {
         return $this->db->rowCount() > 0;
     }
 
+    public function getTotalBranches() {
+        $this->db->query("SELECT COUNT(*) as total FROM " . $this->table . " WHERE is_active = 1");
+        $result = $this->db->single();
+        return $result->total;
+    }
+
     public function delete($id) {
         $this->db->query("UPDATE " . $this->table . " SET is_active = 0 WHERE id = :id");
         $this->db->bind('id', $id);

@@ -48,6 +48,51 @@ class Booking_model {
         return $this->db->rowCount();
     }
 
+    public function createWalkInBooking($data) {
+        $query = "INSERT INTO bookings (user_id, branch_id, table_id, booking_code, start_time, duration, end_time, total_price, customer_name, customer_phone, payment_status)
+                  VALUES (:user_id, :branch_id, :table_id, :booking_code, :start_time, :duration, :end_time, :total_price, :customer_name, :customer_phone, :payment_status)";
+
+        // Hitung end_time otomatis
+        $end_time = date('Y-m-d H:i:s', strtotime($data['start_time'] . " + " . $data['duration'] . " hours"));
+
+        $this->db->query($query);
+        $this->db->bind('user_id', $data['user_id']);
+        $this->db->bind('branch_id', $data['branch_id']);
+        $this->db->bind('table_id', $data['table_id']);
+        $this->db->bind('booking_code', $data['booking_code']);
+        $this->db->bind('start_time', $data['start_time']);
+        $this->db->bind('duration', $data['duration']);
+        $this->db->bind('end_time', $end_time);
+        $this->db->bind('total_price', $data['total_price']);
+        $this->db->bind('customer_name', $data['customer_name']);
+        $this->db->bind('customer_phone', $data['customer_phone']);
+        $this->db->bind('payment_status', $data['payment_status'] ?? 'Unpaid');
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function updatePaymentStatus($booking_code, $payment_status, $payment_method) {
+        $this->db->query("UPDATE bookings SET payment_status = :payment_status, payment_method = :payment_method WHERE booking_code = :booking_code");
+        $this->db->bind('payment_status', $payment_status);
+        $this->db->bind('payment_method', $payment_method);
+        $this->db->bind('booking_code', $booking_code);
+
+        $this->db->execute();
+        return $this->db->rowCount() > 0;
+    }
+
+    public function getTotalBookings($branch_id = null) {
+        if ($branch_id) {
+            $this->db->query("SELECT COUNT(*) as total FROM bookings WHERE branch_id = :branch_id");
+            $this->db->bind('branch_id', $branch_id);
+        } else {
+            $this->db->query("SELECT COUNT(*) as total FROM bookings");
+        }
+        $result = $this->db->single();
+        return $result->total;
+    }
+
     public function getBookingByCode($code) {
         $this->db->query("SELECT * FROM bookings WHERE booking_code = :code");
         $this->db->bind('code', $code);
@@ -55,13 +100,32 @@ class Booking_model {
     }
 
     // Method untuk mendapatkan booking aktif
-    public function getActiveBookings() {
-        $this->db->query("SELECT * FROM bookings WHERE payment_status = 'Paid' AND end_time >= NOW()");
+    public function getActiveBookings($branch_id = null) {
+        if ($branch_id) {
+            $this->db->query("SELECT * FROM bookings WHERE branch_id = :branch_id AND payment_status = 'Paid' AND end_time >= NOW()");
+            $this->db->bind('branch_id', $branch_id);
+        } else {
+            $this->db->query("SELECT * FROM bookings WHERE payment_status = 'Paid' AND end_time >= NOW()");
+        }
         return $this->db->resultSet();
     }
 
-    public function getAll() {
-        $this->db->query("SELECT * FROM bookings ORDER BY id ASC");
+    public function getAll($branch_id = null) {
+        if ($branch_id) {
+            $this->db->query("SELECT b.*, COALESCE(u.name, b.customer_name) as customer_name, t.table_number, b.payment_status as status
+                              FROM bookings b
+                              LEFT JOIN users u ON b.user_id = u.id
+                              LEFT JOIN tables t ON b.table_id = t.id
+                              WHERE b.branch_id = :branch_id
+                              ORDER BY b.id ASC");
+            $this->db->bind('branch_id', $branch_id);
+        } else {
+            $this->db->query("SELECT b.*, COALESCE(u.name, b.customer_name) as customer_name, t.table_number, b.payment_status as status
+                              FROM bookings b
+                              LEFT JOIN users u ON b.user_id = u.id
+                              LEFT JOIN tables t ON b.table_id = t.id
+                              ORDER BY b.id ASC");
+        }
         return $this->db->resultSet();
     }
 
@@ -73,12 +137,22 @@ class Booking_model {
     }
 
     // Method untuk mendapatkan booking terbaru
-    public function getRecentBookings($limit = 5) {
-        $this->db->query("SELECT b.booking_code, u.name as customer_name, b.start_time, b.total_price, b.payment_status
-                          FROM bookings b
-                          JOIN users u ON b.user_id = u.id
-                          ORDER BY b.created_at DESC
-                          LIMIT :limit");
+    public function getRecentBookings($limit = 5, $branch_id = null) {
+        if ($branch_id) {
+            $this->db->query("SELECT b.booking_code, u.name as customer_name, b.start_time, b.total_price, b.payment_status
+                              FROM bookings b
+                              JOIN users u ON b.user_id = u.id
+                              WHERE b.branch_id = :branch_id
+                              ORDER BY b.created_at DESC
+                              LIMIT :limit");
+            $this->db->bind('branch_id', $branch_id);
+        } else {
+            $this->db->query("SELECT b.booking_code, u.name as customer_name, b.start_time, b.total_price, b.payment_status
+                              FROM bookings b
+                              JOIN users u ON b.user_id = u.id
+                              ORDER BY b.created_at DESC
+                              LIMIT :limit");
+        }
         $this->db->bind('limit', $limit);
         return $this->db->resultSet();
     }

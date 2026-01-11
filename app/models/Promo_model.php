@@ -79,6 +79,18 @@ class Promo_model {
         return $this->db->rowCount() > 0;
     }
     
+    public function getActivePromos() {
+        $this->db->query("SELECT p.*, b.branch_name
+                          FROM " . $this->table . " p
+                          LEFT JOIN branches b ON p.branch_id = b.id
+                          WHERE p.is_active = 1
+                          AND p.start_date <= NOW()
+                          AND p.end_date >= NOW()
+                          ORDER BY p.discount_value DESC");
+        $this->db->execute();
+        return $this->db->resultSet();
+    }
+
     public function incrementUsage($id) {
         $this->db->query("UPDATE " . $this->table . " SET used_count = used_count + 1 WHERE id = :id");
         $this->db->bind('id', $id);

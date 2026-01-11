@@ -41,7 +41,7 @@
                         <p class="text-gray-400 text-sm">Today's Revenue</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($daily_revenue): ?>
-                                Rp <?= number_format($daily_revenue->total_revenue, 0, ',', '.'); ?>
+                                Rp <?= number_format($daily_revenue->revenue ?? 0, 0, ',', '.'); ?>
                             <?php else: ?>
                                 Rp 0
                             <?php endif; ?>
@@ -59,7 +59,7 @@
                         <p class="text-gray-400 text-sm">This Month's Revenue</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($monthly_revenue): ?>
-                                Rp <?= number_format($monthly_revenue->total_revenue, 0, ',', '.'); ?>
+                                Rp <?= number_format($monthly_revenue->revenue ?? 0, 0, ',', '.'); ?>
                             <?php else: ?>
                                 Rp 0
                             <?php endif; ?>
@@ -77,7 +77,7 @@
                         <p class="text-gray-400 text-sm">This Year's Revenue</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($yearly_revenue): ?>
-                                Rp <?= number_format($yearly_revenue->total_revenue, 0, ',', '.'); ?>
+                                Rp <?= number_format($yearly_revenue->revenue ?? 0, 0, ',', '.'); ?>
                             <?php else: ?>
                                 Rp 0
                             <?php endif; ?>

@@ -17,10 +17,10 @@ class Admin extends Controller {
         $bookingModel = $this->model('Booking_model');
         $userModel = $this->model('User_model');
 
-        $data['active_bookings_count'] = count($bookingModel->getActiveBookings());
+        $data['active_bookings_count'] = count($bookingModel->getActiveBookings($branch_id));
         $data['total_revenue'] = $bookingModel->getTotalRevenue();
         $data['members_count'] = count($userModel->getAllMembers());
-        $data['recent_bookings'] = $bookingModel->getRecentBookings(5);
+        $data['recent_bookings'] = $bookingModel->getRecentBookings(5, $branch_id);
 
         $this->view('admin/index', $data);
     }

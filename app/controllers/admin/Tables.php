@@ -7,7 +7,7 @@ class Tables extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin') {
+        if(!isset($_SESSION['user_id']) || ($_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin')) {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -16,11 +16,13 @@ class Tables extends Controller {
     public function index() {
         $tableModel = $this->model('Table_model');
         $branchModel = $this->model('Branch_model');
-        
+
         $data['judul'] = 'Table Management - Bille Billiards';
-        $data['tables'] = $tableModel->getAll();
+        // Get branch ID from session or default to 1
+        $branch_id = $_SESSION['branch_id'] ?? 1;
+        $data['tables'] = $tableModel->getTablesByBranch($branch_id);
         $data['branches'] = $branchModel->getAll();
-        
+
         $this->view('admin/tables/index', $data);
     }
 

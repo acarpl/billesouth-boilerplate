@@ -57,24 +57,25 @@
                 <tbody>
                     <?php foreach($bookings as $booking): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="px-4 py-3 font-medium text-white">#<?= $booking->booking_code; ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($booking->customer_name); ?></td>
-                        <td class="px-4 py-3">#<?= $booking->table_number; ?></td>
-                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($booking->booking_date)); ?></td>
-                        <td class="px-4 py-3"><?= $booking->start_time . ' - ' . $booking->end_time; ?></td>
-                        <td class="px-4 py-3"><?= $booking->duration; ?> hours</td>
+                        <td class="px-4 py-3 font-medium text-white">#<?= $booking->booking_code ?? ''; ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($booking->customer_name ?? 'N/A'); ?></td>
+                        <td class="px-4 py-3">#<?= $booking->table_number ?? $booking->table_id ?? 'N/A'; ?></td>
+                        <td class="px-4 py-3"><?= isset($booking->start_time) && !empty($booking->start_time) ? date('M d, Y', strtotime($booking->start_time)) : 'N/A'; ?></td>
+                        <td class="px-4 py-3"><?= isset($booking->start_time) && !empty($booking->start_time) ? date('H:i', strtotime($booking->start_time)) : 'N/A'; ?> - <?= isset($booking->end_time) && !empty($booking->end_time) ? date('H:i', strtotime($booking->end_time)) : 'N/A'; ?></td>
+                        <td class="px-4 py-3"><?= $booking->duration ?? 'N/A'; ?> hours</td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($booking->status == 'confirmed'): echo 'bg-green-500/20 text-green-500';
-                                    elseif($booking->status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
+                                    $status = $booking->status ?? 'unknown';
+                                    if($status == 'confirmed' || $status == 'Paid'): echo 'bg-green-500/20 text-green-500';
+                                    elseif($status == 'pending' || $status == 'Unpaid'): echo 'bg-yellow-500/20 text-yellow-500';
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= ucfirst($booking->status); ?>
+                                <?= ucfirst($status); ?>
                             </span>
                         </td>
-                        <td class="px-4 py-3">Rp <?= number_format($booking->total_price, 0, ',', '.'); ?></td>
+                        <td class="px-4 py-3">Rp <?= number_format($booking->total_price ?? 0, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
                                 <a href="#" class="text-blue-500 hover:text-blue-400">

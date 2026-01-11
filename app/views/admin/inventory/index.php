@@ -59,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($products as $product): ?>
+                    <?php foreach($products as $product ): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="px-4 py-3">
                             <?php if($product->image): ?>
@@ -73,29 +73,31 @@
                         <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($product->name); ?></td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-500">
-                                <?= ucfirst($product->category); ?>
+                                <?= ucfirst($product->category ?? 'Uncategorized'); ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">Rp <?= number_format($product->price, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($product->stock > 10): echo 'bg-green-500/20 text-green-500';
-                                    elseif($product->stock > 0): echo 'bg-yellow-500/20 text-yellow-500';
-                                    else: echo 'bg-red-500/20 text-red-500';
+                                    $stock = $product->stock ?? 0;
+                                    if($stock > 10): echo 'bg-green-500/20 text-green-500';
+                                    elseif($stock > 0): echo 'bg-yellow-500/20 text-yellow-500';
+                                    else: echo 'bg-red-500/20 t ext-red-500';
                                     endif;
                                 ?>">
-                                <?= $product->stock; ?> left
+                                <?= $stock; ?> left
                             </span>
                         </td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($product->status == 'active'): echo 'bg-green-500/20 text-green-500';
+                                    $status = $product->status ?? ($product->is_active ?? 0) ? 'active' : 'inactive';
+                                    if($status == 'active' || $status == 1): echo 'bg-green-500/20 text-green-500';
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= ucfirst($product->status); ?>
+                                <?= ucfirst($status); ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">

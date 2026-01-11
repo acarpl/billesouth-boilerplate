@@ -7,7 +7,7 @@ class Promos extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
