@@ -60,6 +60,11 @@ class Booking_model {
         return $this->db->resultSet();
     }
 
+    public function getAll() {
+        $this->db->query("SELECT * FROM bookings ORDER BY id ASC");
+        return $this->db->resultSet();
+    }
+
     // Method untuk mendapatkan total revenue
     public function getTotalRevenue() {
         $this->db->query("SELECT SUM(total_price) as total_revenue FROM bookings WHERE payment_status = 'Paid'");

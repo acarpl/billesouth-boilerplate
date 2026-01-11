@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -87,7 +108,7 @@
                                 <td class="px-4 py-3">Rp <?= number_format($product->total_revenue, 0, ',', '.'); ?></td>
                             </tr>
                             <?php endforeach; ?>
-                            
+
                             <?php if(empty($top_products)): ?>
                             <tr>
                                 <td colspan="3" class="px-4 py-3 text-center text-gray-500">No sales data available</td>
@@ -101,7 +122,7 @@
             <!-- Report Selection -->
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
                 <h2 class="text-xl font-bold text-white mb-4">Generate Reports</h2>
-                
+
                 <div class="space-y-4">
                     <div>
                         <h3 class="text-lg font-medium text-white mb-2">Daily Report</h3>
@@ -112,7 +133,7 @@
                             </button>
                         </form>
                     </div>
-                    
+
                     <div>
                         <h3 class="text-lg font-medium text-white mb-2">Monthly Report</h3>
                         <form action="<?= BASEURL; ?>/admin/reports/monthly" method="GET" class="flex">
@@ -122,7 +143,7 @@
                             </button>
                         </form>
                     </div>
-                    
+
                     <div>
                         <h3 class="text-lg font-medium text-white mb-2">Yearly Report</h3>
                         <form action="<?= BASEURL; ?>/admin/reports/yearly" method="GET" class="flex">
@@ -137,3 +158,6 @@
         </div>
     </main>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

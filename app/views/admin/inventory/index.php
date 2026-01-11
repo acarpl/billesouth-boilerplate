@@ -26,13 +26,13 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Table Management</h1>
-            <p class="text-gray-400">Manage your billiard parlor tables</p>
+            <h1 class="text-3xl font-bold text-white">Inventory Management</h1>
+            <p class="text-gray-400">Manage shop inventory and stock levels</p>
         </div>
 
         <div class="mb-6">
-            <a href="<?= BASEURL; ?>/admin/tables/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add New Table
+            <a href="<?= BASEURL; ?>/admin/products/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add New Item
             </a>
         </div>
 
@@ -44,54 +44,66 @@
             </div>
         <?php endif; ?>
 
-        <!-- Tables Table -->
+        <!-- Inventory Table -->
         <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Table #</th>
-                        <th class="px-4 py-3">Branch</th>
-                        <th class="px-4 py-3">Capacity</th>
-                        <th class="px-4 py-3">Type</th>
+                        <th class="px-4 py-3">Image</th>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="px-4 py-3">Category</th>
+                        <th class="px-4 py-3">Price</th>
+                        <th class="px-4 py-3">Stock</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($tables as $table): ?>
+                    <?php foreach($products as $product): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="px-4 py-3 font-medium text-white">#<?= htmlspecialchars($table->table_number); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($table->branch_name); ?></td>
-                        <td class="px-4 py-3">Rp <?= number_format($table->price_per_hour, 0, ',', '.'); ?>/hour</td>
+                        <td class="px-4 py-3">
+                            <?php if($product->image): ?>
+                                <img src="<?= BASEURL . '/../' . $product->image; ?>" alt="<?= htmlspecialchars($product->name); ?>" class="w-12 h-12 object-cover rounded">
+                            <?php else: ?>
+                                <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-500"></i>
+                                </div>
+                            <?php endif; ?>
+                        </td>
+                        <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($product->name); ?></td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-500">
+                                <?= ucfirst($product->category); ?>
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">Rp <?= number_format($product->price, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($table->type == 'VVIP'): echo 'bg-purple-500/20 text-purple-500';
-                                    elseif($table->type == 'VIP'): echo 'bg-yellow-500/20 text-yellow-500';
-                                    else: echo 'bg-gray-500/20 text-gray-500';
+                                    if($product->stock > 10): echo 'bg-green-500/20 text-green-500';
+                                    elseif($product->stock > 0): echo 'bg-yellow-500/20 text-yellow-500';
+                                    else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= htmlspecialchars($table->type); ?>
+                                <?= $product->stock; ?> left
                             </span>
                         </td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($table->status == 'Available'): echo 'bg-green-500/20 text-green-500';
-                                    elseif($table->status == 'Occupied'): echo 'bg-red-500/20 text-red-500';
-                                    elseif($table->status == 'Pending'): echo 'bg-yellow-500/20 text-yellow-500';
-                                    else: echo 'bg-gray-500/20 text-gray-500';
+                                    if($product->status == 'active'): echo 'bg-green-500/20 text-green-500';
+                                    else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= htmlspecialchars($table->status); ?>
+                                <?= ucfirst($product->status); ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
-                                <a href="<?= BASEURL; ?>/admin/tables/edit/<?= $table->id; ?>" class="text-blue-500 hover:text-blue-400">
+                                <a href="<?= BASEURL; ?>/admin/products/edit/<?= $product->id; ?>" class="text-blue-500 hover:text-blue-400">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="#" onclick="confirmDelete(<?= $table->id; ?>)" class="text-red-500 hover:text-red-400">
+                                <a href="#" class="text-red-500 hover:text-red-400">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
@@ -101,27 +113,14 @@
                 </tbody>
             </table>
 
-            <?php if(empty($tables)): ?>
+            <?php if(empty($products)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No tables found. <a href="<?= BASEURL; ?>/admin/tables/create" class="text-blue-500 hover:underline">Add your first table</a>.</p>
+                    <p>No inventory items found. <a href="<?= BASEURL; ?>/admin/products/create" class="text-blue-500 hover:underline">Add your first item</a>.</p>
                 </div>
             <?php endif; ?>
         </div>
     </main>
 </div>
-
-<script>
-function confirmDelete(id) {
-    if(confirm('Are you sure you want to delete this table?')) {
-        // Create a form and submit it to delete the table
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= BASEURL; ?>/admin/tables/destroy/' + id;
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>

@@ -22,8 +22,6 @@ class Admin extends Controller {
         $data['members_count'] = count($userModel->getAllMembers());
         $data['recent_bookings'] = $bookingModel->getRecentBookings(5);
 
-        $this->view('templates/header', $data);
         $this->view('admin/index', $data);
-        $this->view('templates/footer');
     }
 }

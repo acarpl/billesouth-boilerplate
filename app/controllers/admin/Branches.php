@@ -7,7 +7,7 @@ class Branches extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -18,43 +18,39 @@ class Branches extends Controller {
         $data['judul'] = 'Branch Management - Bille Billiards';
         $data['branches'] = $branchModel->getAll();
         
-        $this->view('templates/header', $data);
         $this->view('admin/branches/index', $data);
-        $this->view('templates/footer');
     }
 
     public function create() {
         $data['judul'] = 'Add New Branch - Bille Billiards';
         
-        $this->view('templates/header', $data);
         $this->view('admin/branches/create', $data);
-        $this->view('templates/footer');
     }
 
     public function store() {
         $branchModel = $this->model('Branch_model');
-        
+
         // Validate input
-        if(empty($_POST['branch_name']) || empty($_POST['location']) || empty($_POST['phone'])) {
+        if(empty($_POST['branch_name']) || empty($_POST['address']) || empty($_POST['phone_wa'])) {
             Flasher::setFlash('error', 'All fields are required');
             header('Location: ' . BASEURL . '/admin/branches/create');
             exit;
         }
-        
+
         $data = [
             'branch_name' => $_POST['branch_name'],
-            'location' => $_POST['location'],
-            'phone' => $_POST['phone'],
-            'opening_hours' => $_POST['opening_hours'] ?? '',
+            'address' => $_POST['address'],
+            'phone_wa' => $_POST['phone_wa'],
+            'maps_link' => $_POST['maps_link'] ?? '',
             'created_at' => date('Y-m-d H:i:s')
         ];
-        
+
         if($branchModel->create($data)) {
             Flasher::setFlash('success', 'Branch added successfully');
         } else {
             Flasher::setFlash('error', 'Failed to add branch');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/branches');
         exit;
     }
@@ -63,41 +59,39 @@ class Branches extends Controller {
         $branchModel = $this->model('Branch_model');
         $data['judul'] = 'Edit Branch - Bille Billiards';
         $data['branch'] = $branchModel->getById($id);
-        
+
         if(!$data['branch']) {
             Flasher::setFlash('error', 'Branch not found');
             header('Location: ' . BASEURL . '/admin/branches');
             exit;
         }
-        
-        $this->view('templates/header', $data);
+
         $this->view('admin/branches/edit', $data);
-        $this->view('templates/footer');
     }
 
     public function update($id) {
         $branchModel = $this->model('Branch_model');
-        
+
         // Validate input
-        if(empty($_POST['branch_name']) || empty($_POST['location']) || empty($_POST['phone'])) {
+        if(empty($_POST['branch_name']) || empty($_POST['address']) || empty($_POST['phone_wa'])) {
             Flasher::setFlash('error', 'All fields are required');
             header('Location: ' . BASEURL . '/admin/branches/edit/' . $id);
             exit;
         }
-        
+
         $data = [
             'branch_name' => $_POST['branch_name'],
-            'location' => $_POST['location'],
-            'phone' => $_POST['phone'],
-            'opening_hours' => $_POST['opening_hours'] ?? ''
+            'address' => $_POST['address'],
+            'phone_wa' => $_POST['phone_wa'],
+            'maps_link' => $_POST['maps_link'] ?? ''
         ];
-        
+
         if($branchModel->update($id, $data)) {
             Flasher::setFlash('success', 'Branch updated successfully');
         } else {
             Flasher::setFlash('error', 'Failed to update branch');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/branches');
         exit;
     }

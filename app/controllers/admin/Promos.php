@@ -15,59 +15,57 @@ class Promos extends Controller {
 
     public function index() {
         $promoModel = $this->model('Promo_model');
-        
+
         $data['judul'] = 'Promo Management - Bille Billiards';
         $data['promos'] = $promoModel->getAll();
-        
-        $this->view('templates/header', $data);
+
         $this->view('admin/promos/index', $data);
-        $this->view('templates/footer');
     }
 
     public function create() {
         $data['judul'] = 'Add New Promo - Bille Billiards';
         
-        $this->view('templates/header', $data);
         $this->view('admin/promos/create', $data);
-        $this->view('templates/footer');
     }
 
     public function store() {
         $promoModel = $this->model('Promo_model');
-        
+
         // Validate input
-        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['valid_from']) || empty($_POST['valid_until'])) {
+        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
             Flasher::setFlash('error', 'Code, discount type, discount value, and validity dates are required');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
-        
+
         // Validate discount value based on type
         if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
             Flasher::setFlash('error', 'Percentage discount cannot exceed 100%');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
-        
+
         $data = [
+            'branch_id' => $_POST['branch_id'] ?? null,
             'code' => strtoupper($_POST['code']),
-            'description' => $_POST['description'] ?? '',
             'discount_type' => $_POST['discount_type'],
             'discount_value' => $_POST['discount_value'],
-            'valid_from' => $_POST['valid_from'],
-            'valid_until' => $_POST['valid_until'],
-            'usage_limit' => $_POST['usage_limit'] ?? null,
+            'min_purchase' => $_POST['min_purchase'] ?? 0,
+            'max_discount' => $_POST['max_discount'] ?? 0,
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'usage_limit' => $_POST['usage_limit'] ?? 0,
             'used_count' => 0,
-            'status' => $_POST['status'] ?? 'active',
+            'is_active' => 1,
             'created_at' => date('Y-m-d H:i:s')
         ];
-        
+
         if($promoModel->create($data)) {
             Flasher::setFlash('success', 'Promo added successfully');
         } else {
             Flasher::setFlash('error', 'Failed to add promo');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/promos');
         exit;
     }
@@ -84,45 +82,47 @@ class Promos extends Controller {
             exit;
         }
         
-        $this->view('templates/header', $data);
         $this->view('admin/promos/edit', $data);
-        $this->view('templates/footer');
     }
 
     public function update($id) {
         $promoModel = $this->model('Promo_model');
-        
+
         // Validate input
-        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['valid_from']) || empty($_POST['valid_until'])) {
+        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
             Flasher::setFlash('error', 'Code, discount type, discount value, and validity dates are required');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
-        
+
         // Validate discount value based on type
         if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
             Flasher::setFlash('error', 'Percentage discount cannot exceed 100%');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
-        
+
+        $isActive = isset($_POST['is_active']) ? 1 : 0;
+
         $data = [
+            'branch_id' => $_POST['branch_id'] ?? null,
             'code' => strtoupper($_POST['code']),
-            'description' => $_POST['description'],
             'discount_type' => $_POST['discount_type'],
             'discount_value' => $_POST['discount_value'],
-            'valid_from' => $_POST['valid_from'],
-            'valid_until' => $_POST['valid_until'],
-            'usage_limit' => $_POST['usage_limit'] ?? null,
-            'status' => $_POST['status']
+            'min_purchase' => $_POST['min_purchase'] ?? 0,
+            'max_discount' => $_POST['max_discount'] ?? 0,
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'usage_limit' => $_POST['usage_limit'] ?? 0,
+            'is_active' => $isActive
         ];
-        
+
         if($promoModel->update($id, $data)) {
             Flasher::setFlash('success', 'Promo updated successfully');
         } else {
             Flasher::setFlash('error', 'Failed to update promo');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/promos');
         exit;
     }

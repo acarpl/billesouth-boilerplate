@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -52,29 +73,23 @@
                         <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($product->name); ?></td>
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-500">
-                                <?= ucfirst($product->category); ?>
+                                <?php
+                                    if($product->category_id == 1): echo 'Merchandise';
+                                    elseif($product->category_id == 2): echo 'F&B';
+                                    else: echo 'Unknown';
+                                    endif;
+                                ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">Rp <?= number_format($product->price, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
-                                    if($product->stock > 10): echo 'bg-green-500/20 text-green-500';
-                                    elseif($product->stock > 0): echo 'bg-yellow-500/20 text-yellow-500';
+                            <span class="px-2 py-1 text-xs rounded-full
+                                <?php
+                                    if($product->is_active): echo 'bg-green-500/20 text-green-500';
                                     else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
+                                    endif;
                                 ?>">
-                                <?= $product->stock; ?> left
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
-                                    if($product->status == 'active'): echo 'bg-green-500/20 text-green-500';
-                                    else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
-                                ?>">
-                                <?= ucfirst($product->status); ?>
+                                <?= $product->is_active ? 'Active' : 'Inactive'; ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">
@@ -113,3 +128,6 @@ function confirmDelete(id) {
     }
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

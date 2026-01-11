@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -19,6 +40,15 @@
                         </div>
 
                         <div>
+                            <label for="category_id" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                            <select name="category_id" id="category_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
+                                <option value="">Select a category</option>
+                                <option value="1">Merchandise</option>
+                                <option value="2">F&B</option>
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
                             <textarea name="description" id="description" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter product description"></textarea>
                         </div>
@@ -29,26 +59,11 @@
                         </div>
 
                         <div>
-                            <label for="category" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
-                            <select name="category" id="category" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                <option value="food">Food</option>
-                                <option value="drink">Drink</option>
-                                <option value="merchandise">Merchandise</option>
-                                <option value="equipment">Equipment</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="stock" class="block text-sm font-medium text-gray-300 mb-2">Stock Quantity</label>
-                            <input type="number" name="stock" id="stock" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter stock quantity" value="0">
-                        </div>
-
-                        <div>
-                            <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                            <select name="status" id="status" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
+                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Active Status</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" name="is_active" id="is_active" class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500" checked>
+                                <label for="is_active" class="ml-2 text-sm text-gray-300">Product is active</label>
+                            </div>
                         </div>
 
                         <div>
@@ -71,3 +86,6 @@
         </div>
     </main>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

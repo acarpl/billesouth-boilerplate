@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -19,18 +40,18 @@
                         </div>
 
                         <div>
-                            <label for="location" class="block text-sm font-medium text-gray-300 mb-2">Location</label>
-                            <input type="text" name="location" id="location" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($branch->location); ?>" required>
+                            <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                            <input type="text" name="address" id="address" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($branch->address ?? ''); ?>" required>
                         </div>
 
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                            <input type="tel" name="phone" id="phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($branch->phone); ?>" required>
+                            <label for="phone_wa" class="block text-sm font-medium text-gray-300 mb-2">Phone/WhatsApp</label>
+                            <input type="tel" name="phone_wa" id="phone_wa" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($branch->phone_wa ?? ''); ?>" required>
                         </div>
 
                         <div>
-                            <label for="opening_hours" class="block text-sm font-medium text-gray-300 mb-2">Opening Hours</label>
-                            <textarea name="opening_hours" id="opening_hours" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter opening hours (e.g., Mon-Sun: 10AM-12AM)"><?= htmlspecialchars($branch->opening_hours); ?></textarea>
+                            <label for="maps_link" class="block text-sm font-medium text-gray-300 mb-2">Maps Link</label>
+                            <input type="url" name="maps_link" id="maps_link" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($branch->maps_link ?? ''); ?>" placeholder="Enter Google Maps link">
                         </div>
                     </div>
 
@@ -47,3 +68,6 @@
         </div>
     </main>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

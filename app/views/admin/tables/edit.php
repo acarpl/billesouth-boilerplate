@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates\admin_sidebar'); ?>
@@ -15,7 +36,7 @@
                     <div class="grid grid-cols-1 gap-6">
                         <div>
                             <label for="table_number" class="block text-sm font-medium text-gray-300 mb-2">Table Number</label>
-                            <input type="number" name="table_number" id="table_number" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($table->table_number); ?>" required>
+                            <input type="text" name="table_number" id="table_number" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($table->table_number); ?>" required>
                         </div>
 
                         <div>
@@ -29,25 +50,26 @@
                         </div>
 
                         <div>
-                            <label for="capacity" class="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
-                            <input type="number" name="capacity" id="capacity" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($table->capacity); ?>" required>
+                            <label for="price_per_hour" class="block text-sm font-medium text-gray-300 mb-2">Price Per Hour (Rp)</label>
+                            <input type="number" name="price_per_hour" id="price_per_hour" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($table->price_per_hour); ?>" required min="0">
                         </div>
 
                         <div>
                             <label for="type" class="block text-sm font-medium text-gray-300 mb-2">Table Type</label>
                             <select name="type" id="type" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="regular" <?= $table->type == 'regular' ? 'selected' : '' ?>>Regular</option>
-                                <option value="premium" <?= $table->type == 'premium' ? 'selected' : '' ?>>Premium</option>
-                                <option value="vip" <?= $table->type == 'vip' ? 'selected' : '' ?>>VIP</option>
+                                <option value="Regular" <?= $table->type == 'Regular' ? 'selected' : '' ?>>Regular</option>
+                                <option value="VIP" <?= $table->type == 'VIP' ? 'selected' : '' ?>>VIP</option>
+                                <option value="VVIP" <?= $table->type == 'VVIP' ? 'selected' : '' ?>>VVIP</option>
                             </select>
                         </div>
 
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
                             <select name="status" id="status" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="available" <?= $table->status == 'available' ? 'selected' : '' ?>>Available</option>
-                                <option value="occupied" <?= $table->status == 'occupied' ? 'selected' : '' ?>>Occupied</option>
-                                <option value="maintenance" <?= $table->status == 'maintenance' ? 'selected' : '' ?>>Maintenance</option>
+                                <option value="Available" <?= $table->status == 'Available' ? 'selected' : '' ?>>Available</option>
+                                <option value="Pending" <?= $table->status == 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                <option value="Occupied" <?= $table->status == 'Occupied' ? 'selected' : '' ?>>Occupied</option>
+                                <option value="Maintenance" <?= $table->status == 'Maintenance' ? 'selected' : '' ?>>Maintenance</option>
                             </select>
                         </div>
                     </div>
@@ -65,3 +87,6 @@
         </div>
     </main>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

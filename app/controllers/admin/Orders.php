@@ -7,7 +7,7 @@ class Orders extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -19,9 +19,7 @@ class Orders extends Controller {
         $data['judul'] = 'Order Management - Bille Billiards';
         $data['orders'] = $orderModel->getAll();
         
-        $this->view('templates/header', $data);
         $this->view('admin/orders/index', $data);
-        $this->view('templates/footer');
     }
 
     public function show($id) {
@@ -37,9 +35,7 @@ class Orders extends Controller {
             exit;
         }
         
-        $this->view('templates/header', $data);
         $this->view('admin/orders/show', $data);
-        $this->view('templates/footer');
     }
 
     public function updateStatus($id) {

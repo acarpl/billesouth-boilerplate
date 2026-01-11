@@ -26,14 +26,8 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Branch Management</h1>
-            <p class="text-gray-400">Manage your billiard parlor branches</p>
-        </div>
-
-        <div class="mb-6">
-            <a href="<?= BASEURL; ?>/admin/branches/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add New Branch
-            </a>
+            <h1 class="text-3xl font-bold text-white">Booking Management</h1>
+            <p class="text-gray-400">Manage table reservations and bookings</p>
         </div>
 
         <!-- Success/Error Messages -->
@@ -44,31 +38,49 @@
             </div>
         <?php endif; ?>
 
-        <!-- Branches Table -->
+        <!-- Bookings Table -->
         <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Branch Name</th>
-                        <th class="px-4 py-3">Location</th>
-                        <th class="px-4 py-3">Phone</th>
-                        <th class="px-4 py-3">Opening Hours</th>
+                        <th class="px-4 py-3">Booking Code</th>
+                        <th class="px-4 py-3">Customer</th>
+                        <th class="px-4 py-3">Table</th>
+                        <th class="px-4 py-3">Date</th>
+                        <th class="px-4 py-3">Time</th>
+                        <th class="px-4 py-3">Duration</th>
+                        <th class="px-4 py-3">Status</th>
+                        <th class="px-4 py-3">Total</th>
                         <th class="px-4 py-3">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($branches as $branch): ?>
+                    <?php foreach($bookings as $booking): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($branch->branch_name ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->location ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->phone ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->opening_hours ?? ''); ?></td>
+                        <td class="px-4 py-3 font-medium text-white">#<?= $booking->booking_code; ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($booking->customer_name); ?></td>
+                        <td class="px-4 py-3">#<?= $booking->table_number; ?></td>
+                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($booking->booking_date)); ?></td>
+                        <td class="px-4 py-3"><?= $booking->start_time . ' - ' . $booking->end_time; ?></td>
+                        <td class="px-4 py-3"><?= $booking->duration; ?> hours</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full
+                                <?php
+                                    if($booking->status == 'confirmed'): echo 'bg-green-500/20 text-green-500';
+                                    elseif($booking->status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
+                                    else: echo 'bg-red-500/20 text-red-500';
+                                    endif;
+                                ?>">
+                                <?= ucfirst($booking->status); ?>
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">Rp <?= number_format($booking->total_price, 0, ',', '.'); ?></td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
-                                <a href="<?= BASEURL; ?>/admin/branches/edit/<?= $branch->id; ?>" class="text-blue-500 hover:text-blue-400">
+                                <a href="#" class="text-blue-500 hover:text-blue-400">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="#" onclick="confirmDelete(<?= $branch->id; ?>)" class="text-red-500 hover:text-red-400">
+                                <a href="#" class="text-red-500 hover:text-red-400">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
@@ -77,28 +89,15 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            
-            <?php if(empty($branches)): ?>
+
+            <?php if(empty($bookings)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No branches found. <a href="<?= BASEURL; ?>/admin/branches/create" class="text-blue-500 hover:underline">Add your first branch</a>.</p>
+                    <p>No bookings found.</p>
                 </div>
             <?php endif; ?>
         </div>
     </main>
 </div>
-
-<script>
-function confirmDelete(id) {
-    if(confirm('Are you sure you want to delete this branch?')) {
-        // Create a form and submit it to delete the branch
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= BASEURL; ?>/admin/branches/destroy/' + id;
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
 </html>

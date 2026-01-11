@@ -7,7 +7,7 @@ class Tables extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -21,9 +21,7 @@ class Tables extends Controller {
         $data['tables'] = $tableModel->getAll();
         $data['branches'] = $branchModel->getAll();
         
-        $this->view('templates/header', $data);
         $this->view('admin/tables/index', $data);
-        $this->view('templates/footer');
     }
 
     public function create() {
@@ -32,36 +30,33 @@ class Tables extends Controller {
         $data['judul'] = 'Add New Table - Bille Billiards';
         $data['branches'] = $branchModel->getAll();
         
-        $this->view('templates/header', $data);
         $this->view('admin/tables/create', $data);
-        $this->view('templates/footer');
     }
 
     public function store() {
         $tableModel = $this->model('Table_model');
-        
+
         // Validate input
-        if(empty($_POST['table_number']) || empty($_POST['branch_id']) || empty($_POST['capacity'])) {
-            Flasher::setFlash('error', 'Table number, branch, and capacity are required');
+        if(empty($_POST['table_number']) || empty($_POST['branch_id']) || empty($_POST['price_per_hour'])) {
+            Flasher::setFlash('error', 'Table number, branch, and price per hour are required');
             header('Location: ' . BASEURL . '/admin/tables/create');
             exit;
         }
-        
+
         $data = [
             'table_number' => $_POST['table_number'],
             'branch_id' => $_POST['branch_id'],
-            'capacity' => $_POST['capacity'],
-            'status' => $_POST['status'] ?? 'available',
-            'type' => $_POST['type'] ?? 'regular',
-            'created_at' => date('Y-m-d H:i:s')
+            'type' => $_POST['type'] ?? 'Regular',
+            'price_per_hour' => $_POST['price_per_hour'],
+            'status' => $_POST['status'] ?? 'Available'
         ];
-        
+
         if($tableModel->create($data)) {
             Flasher::setFlash('success', 'Table added successfully');
         } else {
             Flasher::setFlash('error', 'Failed to add table');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/tables');
         exit;
     }
@@ -80,35 +75,33 @@ class Tables extends Controller {
             exit;
         }
         
-        $this->view('templates/header', $data);
         $this->view('admin/tables/edit', $data);
-        $this->view('templates/footer');
     }
 
     public function update($id) {
         $tableModel = $this->model('Table_model');
-        
+
         // Validate input
-        if(empty($_POST['table_number']) || empty($_POST['branch_id']) || empty($_POST['capacity'])) {
-            Flasher::setFlash('error', 'Table number, branch, and capacity are required');
+        if(empty($_POST['table_number']) || empty($_POST['branch_id']) || empty($_POST['price_per_hour'])) {
+            Flasher::setFlash('error', 'Table number, branch, and price per hour are required');
             header('Location: ' . BASEURL . '/admin/tables/edit/' . $id);
             exit;
         }
-        
+
         $data = [
             'table_number' => $_POST['table_number'],
             'branch_id' => $_POST['branch_id'],
-            'capacity' => $_POST['capacity'],
-            'status' => $_POST['status'],
-            'type' => $_POST['type']
+            'type' => $_POST['type'],
+            'price_per_hour' => $_POST['price_per_hour'],
+            'status' => $_POST['status']
         ];
-        
+
         if($tableModel->update($id, $data)) {
             Flasher::setFlash('success', 'Table updated successfully');
         } else {
             Flasher::setFlash('error', 'Failed to update table');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/tables');
         exit;
     }

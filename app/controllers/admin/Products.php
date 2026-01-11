@@ -7,7 +7,7 @@ class Products extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -19,65 +19,61 @@ class Products extends Controller {
         $data['judul'] = 'Product Management - Bille Billiards';
         $data['products'] = $productModel->getAll();
         
-        $this->view('templates/header', $data);
         $this->view('admin/products/index', $data);
-        $this->view('templates/footer');
     }
 
     public function create() {
         $data['judul'] = 'Add New Product - Bille Billiards';
         
-        $this->view('templates/header', $data);
         $this->view('admin/products/create', $data);
-        $this->view('templates/footer');
     }
 
     public function store() {
         $productModel = $this->model('Product_model');
-        
+
         // Validate input
-        if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category'])) {
+        if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category_id'])) {
             Flasher::setFlash('error', 'Product name, price, and category are required');
             header('Location: ' . BASEURL . '/admin/products/create');
             exit;
         }
-        
+
         // Handle image upload if provided
         $image = '';
         if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $uploadDir = 'public/uploads/products/';
             $uploadPath = $_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $uploadDir;
-            
+
             // Create directory if it doesn't exist
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0777, true);
             }
-            
+
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetFile = $uploadPath . $fileName;
-            
+
             if(move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
                 $image = $uploadDir . $fileName;
             }
         }
-        
+
+        $isActive = isset($_POST['is_active']) ? 1 : 0;
+
         $data = [
+            'category_id' => $_POST['category_id'],
             'name' => $_POST['name'],
             'description' => $_POST['description'] ?? '',
             'price' => $_POST['price'],
-            'category' => $_POST['category'],
-            'stock' => $_POST['stock'] ?? 0,
             'image' => $image,
-            'status' => $_POST['status'] ?? 'active',
-            'created_at' => date('Y-m-d H:i:s')
+            'is_active' => $isActive
         ];
-        
+
         if($productModel->create($data)) {
             Flasher::setFlash('success', 'Product added successfully');
         } else {
             Flasher::setFlash('error', 'Failed to add product');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/products');
         exit;
     }
@@ -94,35 +90,33 @@ class Products extends Controller {
             exit;
         }
         
-        $this->view('templates/header', $data);
         $this->view('admin/products/edit', $data);
-        $this->view('templates/footer');
     }
 
     public function update($id) {
         $productModel = $this->model('Product_model');
-        
+
         // Validate input
-        if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category'])) {
+        if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category_id'])) {
             Flasher::setFlash('error', 'Product name, price, and category are required');
             header('Location: ' . BASEURL . '/admin/products/edit/' . $id);
             exit;
         }
-        
+
         // Handle image upload if provided
         $image = $_POST['existing_image'] ?? '';
         if(isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $uploadDir = 'public/uploads/products/';
             $uploadPath = $_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $uploadDir;
-            
+
             // Create directory if it doesn't exist
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0777, true);
             }
-            
+
             $fileName = time() . '_' . basename($_FILES['image']['name']);
             $targetFile = $uploadPath . $fileName;
-            
+
             if(move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
                 // Delete old image if exists
                 if(!empty($_POST['existing_image']) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $_POST['existing_image'])) {
@@ -131,23 +125,24 @@ class Products extends Controller {
                 $image = $uploadDir . $fileName;
             }
         }
-        
+
+        $isActive = isset($_POST['is_active']) ? 1 : 0;
+
         $data = [
+            'category_id' => $_POST['category_id'],
             'name' => $_POST['name'],
             'description' => $_POST['description'],
             'price' => $_POST['price'],
-            'category' => $_POST['category'],
-            'stock' => $_POST['stock'],
             'image' => $image,
-            'status' => $_POST['status']
+            'is_active' => $isActive
         ];
-        
+
         if($productModel->update($id, $data)) {
             Flasher::setFlash('success', 'Product updated successfully');
         } else {
             Flasher::setFlash('error', 'Failed to update product');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/products');
         exit;
     }

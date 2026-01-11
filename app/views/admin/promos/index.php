@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -29,10 +50,12 @@
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
                         <th class="px-4 py-3">Code</th>
-                        <th class="px-4 py-3">Description</th>
+                        <th class="px-4 py-3">Branch</th>
                         <th class="px-4 py-3">Discount</th>
-                        <th class="px-4 py-3">Valid From</th>
-                        <th class="px-4 py-3">Valid Until</th>
+                        <th class="px-4 py-3">Min Purchase</th>
+                        <th class="px-4 py-3">Max Discount</th>
+                        <th class="px-4 py-3">Start Date</th>
+                        <th class="px-4 py-3">End Date</th>
                         <th class="px-4 py-3">Usage</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Actions</th>
@@ -44,7 +67,17 @@
                         <td class="px-4 py-3 font-medium text-white">
                             <span class="bg-blue-500/20 text-blue-500 px-2 py-1 rounded"><?= htmlspecialchars($promo->code); ?></span>
                         </td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($promo->description); ?></td>
+                        <td class="px-4 py-3">
+                            <?php if($promo->branch_id): ?>
+                                <span class="px-2 py-1 text-xs rounded-full bg-purple-500/20 text-purple-500">
+                                    <?= htmlspecialchars($promo->branch_name); ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="px-2 py-1 text-xs rounded-full bg-gray-500/20 text-gray-500">
+                                    All Branches
+                                </span>
+                            <?php endif; ?>
+                        </td>
                         <td class="px-4 py-3">
                             <?php if($promo->discount_type == 'percentage'): ?>
                                 <span class="px-2 py-1 text-xs rounded-full bg-green-500/20 text-green-500">
@@ -56,10 +89,12 @@
                                 </span>
                             <?php endif; ?>
                         </td>
-                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($promo->valid_from)); ?></td>
-                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($promo->valid_until)); ?></td>
+                        <td class="px-4 py-3">Rp <?= number_format($promo->min_purchase, 0, ',', '.'); ?></td>
+                        <td class="px-4 py-3">Rp <?= number_format($promo->max_discount, 0, ',', '.'); ?></td>
+                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($promo->start_date)); ?></td>
+                        <td class="px-4 py-3"><?= date('M d, Y', strtotime($promo->end_date)); ?></td>
                         <td class="px-4 py-3">
-                            <?php if($promo->usage_limit): ?>
+                            <?php if($promo->usage_limit > 0): ?>
                                 <span class="px-2 py-1 text-xs rounded-full bg-yellow-500/20 text-yellow-500">
                                     <?= $promo->used_count; ?>/<?= $promo->usage_limit; ?>
                                 </span>
@@ -70,13 +105,13 @@
                             <?php endif; ?>
                         </td>
                         <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
-                                    if($promo->status == 'active' && strtotime($promo->valid_until) >= time()): echo 'bg-green-500/20 text-green-500';
+                            <span class="px-2 py-1 text-xs rounded-full
+                                <?php
+                                    if($promo->is_active && strtotime($promo->end_date) >= time()): echo 'bg-green-500/20 text-green-500';
                                     else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
+                                    endif;
                                 ?>">
-                                <?= ucfirst($promo->status); ?>
+                                <?= $promo->is_active ? 'Active' : 'Inactive'; ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">
@@ -93,7 +128,7 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            
+
             <?php if(empty($promos)): ?>
                 <div class="text-center py-8 text-gray-500">
                     <p>No promos found. <a href="<?= BASEURL; ?>/admin/promos/create" class="text-blue-500 hover:underline">Add your first promo</a>.</p>
@@ -115,3 +150,6 @@ function confirmDelete(id) {
     }
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

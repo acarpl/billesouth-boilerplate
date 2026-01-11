@@ -7,7 +7,7 @@ class Dashboard extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+        if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -34,8 +34,6 @@ class Dashboard extends Controller {
         // Get active tables
         $data['active_tables'] = $tableModel->getActiveTables();
 
-        $this->view('templates/header', $data);
         $this->view('admin/dashboard', $data);
-        $this->view('templates/footer');
     }
 }

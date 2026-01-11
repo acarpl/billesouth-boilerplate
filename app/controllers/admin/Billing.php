@@ -10,6 +10,11 @@ class Billing extends Controller {
         }
     }
 
+    public function index() {
+        // Redirect to billing_active method
+        $this->billing_active();
+    }
+
     // Method untuk menampilkan halaman billing/active tables
     public function billing_active($branch_id = null) {
         $tableModel = $this->model('Table_model');
@@ -20,8 +25,7 @@ class Billing extends Controller {
         $data['branch_id'] = $branch_id;
         $data['branches'] = $branchModel->getAll();
 
-        $this->view('templates/header', $data);
         $this->view('admin/billing_active', $data);
-        $this->view('templates/footer');
     }
 }
+    

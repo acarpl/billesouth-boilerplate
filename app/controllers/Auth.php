@@ -37,7 +37,7 @@ class Auth extends Controller {
             $_SESSION['user_role'] = $user->role;
             
             // Redirect berdasarkan role
-            if($user->role == 'admin') {
+            if($user->role == 'super_admin' || $user->role == 'branch_admin') {
                 header('Location: ' . BASEURL . '/admin');
             } else {
                 header('Location: ' . BASEURL . '/home');

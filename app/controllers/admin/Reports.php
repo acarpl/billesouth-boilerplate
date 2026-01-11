@@ -22,9 +22,7 @@ class Reports extends Controller {
         $data['yearly_revenue'] = $reportModel->getYearlyRevenue();
         $data['top_products'] = $reportModel->getTopSellingProducts(5);
         
-        $this->view('templates/header', $data);
         $this->view('admin/reports/index', $data);
-        $this->view('templates/footer');
     }
 
     public function daily() {
@@ -36,9 +34,7 @@ class Reports extends Controller {
         $data['revenue_data'] = $reportModel->getRevenueByDate($date);
         $data['orders'] = $reportModel->getOrdersByDate($date);
         
-        $this->view('templates/header', $data);
         $this->view('admin/reports/daily', $data);
-        $this->view('templates/footer');
     }
 
     public function monthly() {
@@ -50,9 +46,7 @@ class Reports extends Controller {
         $data['revenue_data'] = $reportModel->getRevenueByMonth($month);
         $data['daily_breakdown'] = $reportModel->getDailyRevenueForMonth($month);
         
-        $this->view('templates/header', $data);
         $this->view('admin/reports/monthly', $data);
-        $this->view('templates/footer');
     }
 
     public function yearly() {
@@ -64,8 +58,6 @@ class Reports extends Controller {
         $data['revenue_data'] = $reportModel->getRevenueByYear($year);
         $data['monthly_breakdown'] = $reportModel->getMonthlyRevenueForYear($year);
         
-        $this->view('templates/header', $data);
         $this->view('admin/reports/yearly', $data);
-        $this->view('templates/footer');
     }
 }

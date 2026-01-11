@@ -11,6 +11,7 @@ class Controller {
     // Fungsi untuk memanggil View (Tampilan)
     // $view = nama file di folder views, $data = data yang dikirim ke HTML
     public function view($view, $data = []) {
+        extract($data); // Extract the data array so variables are accessible directly
         require_once '../app/views/' . $view . '.php';
     }
 

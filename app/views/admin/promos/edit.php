@@ -1,3 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $data['judul']; ?></title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (Ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
 <div class="flex">
     <!-- Sidebar -->
     <?php $this->view('templates/admin_sidebar'); ?>
@@ -14,14 +35,22 @@
                 <form action="<?= BASEURL; ?>/admin/promos/update/<?= $promo->id; ?>" method="POST">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <label for="code" class="block text-sm font-medium text-gray-300 mb-2">Promo Code</label>
-                            <input type="text" name="code" id="code" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($promo->code); ?>" required>
-                            <p class="mt-1 text-sm text-gray-500">Will be converted to uppercase automatically</p>
+                            <label for="branch_id" class="block text-sm font-medium text-gray-300 mb-2">Branch (optional)</label>
+                            <select name="branch_id" id="branch_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                                <option value="">All Branches</option>
+                                <?php
+                                $branchModel = $this->model('Branch_model');
+                                $branches = $branchModel->getAll();
+                                foreach($branches as $branch): ?>
+                                    <option value="<?= $branch->id ?>" <?= $promo->branch_id == $branch->id ? 'selected' : '' ?>><?= htmlspecialchars($branch->branch_name) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                            <textarea name="description" id="description" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"><?= htmlspecialchars($promo->description); ?></textarea>
+                            <label for="code" class="block text-sm font-medium text-gray-300 mb-2">Promo Code</label>
+                            <input type="text" name="code" id="code" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($promo->code); ?>" required>
+                            <p class="mt-1 text-sm text-gray-500">Will be converted to uppercase automatically</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -41,27 +70,39 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="valid_from" class="block text-sm font-medium text-gray-300 mb-2">Valid From</label>
-                                <input type="date" name="valid_from" id="valid_from" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->valid_from; ?>" required>
+                                <label for="min_purchase" class="block text-sm font-medium text-gray-300 mb-2">Minimum Purchase (Rp)</label>
+                                <input type="number" name="min_purchase" id="min_purchase" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->min_purchase; ?>" min="0">
                             </div>
 
                             <div>
-                                <label for="valid_until" class="block text-sm font-medium text-gray-300 mb-2">Valid Until</label>
-                                <input type="date" name="valid_until" id="valid_until" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->valid_until; ?>" required>
+                                <label for="max_discount" class="block text-sm font-medium text-gray-300 mb-2">Maximum Discount (Rp)</label>
+                                <input type="number" name="max_discount" id="max_discount" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->max_discount; ?>" min="0">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="start_date" class="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
+                                <input type="date" name="start_date" id="start_date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->start_date; ?>" required>
+                            </div>
+
+                            <div>
+                                <label for="end_date" class="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                                <input type="date" name="end_date" id="end_date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->end_date; ?>" required>
                             </div>
                         </div>
 
                         <div>
-                            <label for="usage_limit" class="block text-sm font-medium text-gray-300 mb-2">Usage Limit (optional)</label>
-                            <input type="number" name="usage_limit" id="usage_limit" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->usage_limit ?: ''; ?>" placeholder="Leave blank for unlimited usage" min="0">
+                            <label for="usage_limit" class="block text-sm font-medium text-gray-300 mb-2">Usage Limit</label>
+                            <input type="number" name="usage_limit" id="usage_limit" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->usage_limit; ?>" min="0">
                         </div>
 
                         <div>
-                            <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
-                            <select name="status" id="status" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="active" <?= $promo->status == 'active' ? 'selected' : '' ?>>Active</option>
-                                <option value="inactive" <?= $promo->status == 'inactive' ? 'selected' : '' ?>>Inactive</option>
-                            </select>
+                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Active Status</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" name="is_active" id="is_active" class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500" <?= $promo->is_active ? 'checked' : ''; ?>>
+                                <label for="is_active" class="ml-2 text-sm text-gray-300">Promo is active</label>
+                            </div>
                         </div>
                     </div>
 
@@ -78,3 +119,6 @@
         </div>
     </main>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>
