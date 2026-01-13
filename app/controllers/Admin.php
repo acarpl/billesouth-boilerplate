@@ -12,9 +12,28 @@ class Admin extends Controller {
         $branch_id = $_SESSION['branch_id'] ?? 1; // Default ke Citra Raya
         $data['judul'] = 'Dashboard Admin Bille';
         $data['tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
-        
-        $this->view('templates/admin_header', $data);
+
+        // Ambil data statistik dari model
+        $bookingModel = $this->model('Booking_model');
+        $userModel = $this->model('User_model');
+
+        $data['active_bookings_count'] = count($bookingModel->getActiveBookings($branch_id));
+        $data['total_revenue'] = $bookingModel->getTotalRevenue();
+        $data['members_count'] = count($userModel->getAllMembers());
+        $data['recent_bookings'] = $bookingModel->getRecentBookings(5, $branch_id);
+
+        // Tambahkan data untuk cashier section (hanya untuk branch admin)
+        if ($_SESSION['user_role'] === 'branch_admin') {
+            $data['active_bookings'] = $bookingModel->getActiveBookings($branch_id);
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
+        } else {
+            // Untuk super admin, bisa menampilkan data dari semua branches atau default
+            $data['active_bookings'] = $bookingModel->getActiveBookings(); // tanpa branch_id untuk semua cabang
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
+        }
+
         $this->view('admin/index', $data);
-        $this->view('templates/admin_footer');
     }
 }
