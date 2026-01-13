@@ -3,30 +3,32 @@
 <section class="min-h-screen bg-black pt-32 pb-20">
     <div class="max-w-7xl mx-auto px-4">
         
-        <!-- Header Reservasi -->
+        <!-- Header Reservasi Dinamis -->
         <div class="mb-12 border-l-4 border-white pl-6">
             <h2 class="text-gray-500 tracking-widest text-xs uppercase mb-2">Langkah 1</h2>
             <h1 class="text-4xl font-bold uppercase tracking-tighter">Pilih Meja & Waktu</h1>
-            <p class="text-gray-400 text-sm mt-2">Cabang: <span class="text-white font-bold">Citra Raya, Tangerang</span></p>
+            <!-- Mengambil Nama Cabang dari Database -->
+            <p class="text-gray-400 text-sm mt-2">Cabang: <span class="text-white font-bold"><?= $data['branch']->branch_name; ?></span></p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
-            <!-- Sisi Kiri: Denah Meja (Interactive Grid) -->
-            <div class="lg:col-span-2">
-                <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-sm">
-                    <!-- Legend -->
-                    <div class="flex gap-6 mb-10 text-[10px] tracking-widest uppercase">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-white"></div> <span>Tersedia</span>
+        <form action="<?= BASEURL; ?>/booking/checkout" method="POST" id="bookingForm">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                
+                <!-- Sisi Kiri: Denah Meja (Dinamis) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-gray-900/50 border border-gray-800 p-8 rounded-sm">
+                        <!-- Legend -->
+                        <div class="flex gap-6 mb-10 text-[10px] tracking-widest uppercase">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-white"></div> <span>Tersedia</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-gray-700"></div> <span>Terisi / Maintenance</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 bg-emerald-500"></div> <span>Pilihanmu</span>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-gray-700"></div> <span>Terisi</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-emerald-500"></div> <span>Pilihanmu</span>
-                        </div>
-                    </div>
 
                     <!-- Table Grid Layout -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -78,12 +80,11 @@
                         <?php endforeach; ?>
                     </div>
 
-                    <!-- VIP Section Hint -->
-                    <div class="mt-12 p-6 border border-dashed border-gray-700 text-center">
-                        <p class="text-gray-500 text-xs tracking-widest uppercase italic">Area VVIP & Private Room Tersedia di Lantai 2</p>
+                        <div class="mt-12 p-6 border border-dashed border-gray-700 text-center">
+                            <p class="text-gray-500 text-[10px] tracking-[0.3em] uppercase italic">Pilih meja yang tersedia untuk melanjutkan</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <!-- Sisi Kanan: Form Waktu & Ringkasan -->
             <div class="lg:col-span-1">
@@ -110,7 +111,7 @@
                                 </select>
                             </div>
 
-                            <!-- Durasi -->
+                            <!-- Durasi Dinamis -->
                             <div>
                                 <label class="block text-[10px] font-bold uppercase mb-2">Durasi (Jam)</label>
                                 <div class="flex items-center gap-4">
@@ -122,7 +123,7 @@
 
                             <hr class="border-gray-200">
 
-                            <!-- Ringkasan Harga -->
+                            <!-- Ringkasan Harga (Statis tampilan, Logic di JS bawah) -->
                             <div class="flex justify-between items-center py-2">
                                 <span class="text-xs text-gray-500">Harga Meja / Jam</span>
                                 <span id="price-per-hour" class="font-bold">Rp 0</span>
@@ -135,12 +136,14 @@
                             <button type="submit" class="w-full bg-black text-white py-4 font-bold tracking-widest hover:bg-gray-800 transition mt-4" id="checkout-btn" disabled>
                                 LANJUT KE PEMBAYARAN
                             </button>
+                            
+                            <p class="text-[9px] text-center text-gray-400 uppercase mt-4">Dengan mengklik tombol, Anda menyetujui syarat & ketentuan Bille.</p>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
+        </form>
     </div>
 </section>
 
