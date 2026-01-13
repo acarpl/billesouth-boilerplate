@@ -13,8 +13,8 @@ class Admin extends Controller {
         $data['judul'] = 'Dashboard Admin Bille';
         $data['tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
         
-        $this->view('templates/admin_header', $data);
+        $this->view('templates/header', $data);
         $this->view('admin/index', $data);
-        $this->view('templates/admin_footer');
+        $this->view('templates/footer');
     }
 }
