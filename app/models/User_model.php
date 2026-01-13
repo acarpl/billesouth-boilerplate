@@ -10,16 +10,16 @@ class User_model {
 
     // Cari user berdasarkan email untuk login
     public function getUserByEmail($email) {
-        $this->db->query("SELECT * FROM " . $this->table . " WHERE email = :email");
+        $this->db->query("SELECT *, COALESCE(branch_id, NULL) as branch_id FROM " . $this->table . " WHERE email = :email");
         $this->db->bind('email', $email);
         return $this->db->single();
     }
 
     // Simpan user baru (Register)
     public function registerUser($data) {
-        $query = "INSERT INTO users (name, email, password, phone, role) 
+        $query = "INSERT INTO users (name, email, password, phone, role)
                   VALUES (:name, :email, :password, :phone, 'member')";
-        
+
         $this->db->query($query);
         $this->db->bind('name', $data['name']);
         $this->db->bind('email', $data['email']);
@@ -29,5 +29,18 @@ class User_model {
 
         $this->db->execute();
         return $this->db->rowCount();
+    }
+
+    // Method untuk mendapatkan semua member
+    public function getAllMembers() {
+        $this->db->query("SELECT * FROM " . $this->table . " WHERE role = 'member'");
+        return $this->db->resultSet();
+    }
+
+    // Method untuk mendapatkan user berdasarkan ID
+    public function getUserById($id) {
+        $this->db->query("SELECT *, COALESCE(branch_id, NULL) as branch_id FROM " . $this->table . " WHERE id = :id");
+        $this->db->bind('id', $id);
+        return $this->db->single();
     }
 }
