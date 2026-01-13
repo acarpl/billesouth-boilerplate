@@ -70,7 +70,13 @@ class Products extends Controller {
             'is_active' => $isActive
         ];
 
-        if($productModel->create($data)) {
+        // Determine branch context for product creation
+        $branch_context = null;
+        if ($_SESSION['user_role'] === 'branch_admin' && isset($_SESSION['branch_id'])) {
+            $branch_context = $_SESSION['branch_id'];
+        }
+
+        if($productModel->create($data, $branch_context)) {
             Flasher::setFlash('success', 'Product added successfully');
         } else {
             Flasher::setFlash('error', 'Failed to add product');
@@ -82,16 +88,16 @@ class Products extends Controller {
 
     public function edit($id) {
         $productModel = $this->model('Product_model');
-        
+
         $data['judul'] = 'Edit Product - Bille Billiards';
         $data['product'] = $productModel->getById($id);
-        
+
         if(!$data['product']) {
             Flasher::setFlash('error', 'Product not found');
             header('Location: ' . BASEURL . '/admin/products');
             exit;
         }
-        
+
         $this->view('admin/products/edit', $data);
     }
 
@@ -151,21 +157,32 @@ class Products extends Controller {
 
     public function destroy($id) {
         $productModel = $this->model('Product_model');
-        
+
         // Get product to delete image if exists
         $product = $productModel->getById($id);
-        
+
+        if(!$product) {
+            Flasher::setFlash('error', 'Product not found');
+            header('Location: ' . BASEURL . '/admin/products');
+            exit;
+        }
+
+        // For enhanced security, we could check if the product is associated with the branch admin's branch
+        // But since products are shared across branches with different stock levels,
+        // we'll allow both super admin and branch admin to delete products
+        // (In a real-world scenario, you might want to check if the product has stock in other branches)
+
         if($productModel->delete($id)) {
             // Delete image file if exists
             if(!empty($product->image) && file_exists($_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $product->image)) {
                 unlink($_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $product->image);
             }
-            
+
             Flasher::setFlash('success', 'Product deleted successfully');
         } else {
             Flasher::setFlash('error', 'Failed to delete product');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/products');
         exit;
     }

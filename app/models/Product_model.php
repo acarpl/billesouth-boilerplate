@@ -155,7 +155,7 @@ class Product_model {
         return $this->db->rowCount() > 0;
     }
 
-    public function create($data) {
+    public function create($data, $branch_id = null) {
         // First, insert the product
         $this->db->query("INSERT INTO products (category_id, name, description, price, image, is_active) VALUES (:category_id, :name, :description, :price, :image, :is_active)");
         $this->db->bind('category_id', $data['category_id']);
@@ -171,12 +171,18 @@ class Product_model {
             // Get the inserted product ID
             $product_id = $this->db->lastInsertId();
 
-            // Create initial stock records for all branches (default to 0)
-            $branchModel = new Branch_model();
-            $branches = $branchModel->getAll();
+            // Create initial stock records
+            if ($branch_id) {
+                // Only create stock for the specified branch
+                $this->updateStock($product_id, $branch_id, 0);
+            } else {
+                // Create initial stock records for all branches (default to 0)
+                $branchModel = new Branch_model();
+                $branches = $branchModel->getAll();
 
-            foreach($branches as $branch) {
-                $this->updateStock($product_id, $branch->id, 0);
+                foreach($branches as $branch) {
+                    $this->updateStock($product_id, $branch->id, 0);
+                }
             }
 
             return true;

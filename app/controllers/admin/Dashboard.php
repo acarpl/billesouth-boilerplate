@@ -7,7 +7,7 @@ class Dashboard extends Controller {
     }
 
     private function checkAdminAuth() {
-        if(!isset($_SESSION['user_id']) || ($_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin')) {
+        if(!isset($_SESSION['user_id']) || (isset($_SESSION['user_role']) && $_SESSION['user_role'] !== 'super_admin' && $_SESSION['user_role'] !== 'branch_admin')) {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
@@ -27,6 +27,16 @@ class Dashboard extends Controller {
         $branch_id = null;
         if ($_SESSION['user_role'] === 'branch_admin') {
             $branch_id = $_SESSION['branch_id'] ?? null;
+
+            // Jika branch_id tidak diatur untuk branch admin, coba ambil dari tabel users
+            if (!$branch_id && isset($_SESSION['user_id'])) {
+                $userModel = $this->model('User_model');
+                $user = $userModel->getUserById($_SESSION['user_id']);
+                if ($user && $user->branch_id) {
+                    $branch_id = $user->branch_id;
+                    $_SESSION['branch_id'] = $user->branch_id; // Simpan ke session
+                }
+            }
         }
 
         // Get statistics for dashboard
@@ -45,6 +55,10 @@ class Dashboard extends Controller {
         if ($_SESSION['user_role'] === 'branch_admin') {
             $data['cashier_tables'] = $tableModel->getTablesByBranch($branch_id);
             $data['promos'] = $promoModel->getActivePromos();
+
+            // Get additional cashier data
+            $data['total_revenue'] = $bookingModel->getTotalRevenue();
+            $data['active_bookings'] = $bookingModel->getActiveBookings($branch_id);
         }
 
         $this->view('admin/dashboard', $data);
@@ -88,7 +102,15 @@ class Dashboard extends Controller {
             $promo = $promoModel->getById($_POST['promo_id']);
 
             if ($promo && $promo->is_active) {
-                $promo_discount = ($total_price * $promo->discount_percentage) / 100;
+                if ($promo->discount_type === 'percentage') {
+                    $promo_discount = ($total_price * $promo->discount_value) / 100;
+                } else { // fixed amount
+                    $promo_discount = $promo->discount_value;
+                }
+
+                // Make sure discount doesn't exceed total price
+                $promo_discount = min($promo_discount, $total_price);
+
                 $promo_id = $promo->id;
             }
         }

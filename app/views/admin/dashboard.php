@@ -81,84 +81,6 @@
             </div>
         </div>
 
-        <!-- Cashier Section for Branch Admins -->
-        <?php if ($_SESSION['user_role'] === 'branch_admin'): ?>
-        <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-8">
-            <h2 class="text-xl font-bold text-white mb-4">Cashier Interface</h2>
-            <p class="text-gray-400 mb-6">Handle walk-in customers and table bookings</p>
-
-            <form action="<?= BASEURL; ?>/admin/bookTable" method="POST">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Customer Information -->
-                    <div class="md:col-span-2">
-                        <h3 class="text-lg font-medium text-white mb-3">Customer Information</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="customer_name" class="block text-sm font-medium text-gray-300 mb-2">Customer Name *</label>
-                                <input type="text" name="customer_name" id="customer_name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter customer name" required>
-                            </div>
-                            <div>
-                                <label for="customer_phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                                <input type="tel" name="customer_phone" id="customer_phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter phone number">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Booking Details -->
-                    <div>
-                        <label for="table_id" class="block text-sm font-medium text-gray-300 mb-2">Select Table *</label>
-                        <select name="table_id" id="table_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                            <option value="">Select a table</option>
-                            <?php foreach($data['cashier_tables'] as $table): ?>
-                                <option value="<?= $table->id ?>">Table #<?= $table->table_number ?> - <?= $table->branch_name ?> (Rp <?= number_format($table->price_per_hour, 0, ',', '.'); ?>/hr)</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="date" class="block text-sm font-medium text-gray-300 mb-2">Date *</label>
-                        <input type="date" name="date" id="date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                    </div>
-
-                    <div>
-                        <label for="start_time" class="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
-                        <input type="time" name="start_time" id="start_time" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                    </div>
-
-                    <div>
-                        <label for="duration" class="block text-sm font-medium text-gray-300 mb-2">Duration (hours) *</label>
-                        <select name="duration" id="duration" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                            <option value="1">1 hour</option>
-                            <option value="2">2 hours</option>
-                            <option value="3">3 hours</option>
-                            <option value="4">4 hours</option>
-                            <option value="5">5 hours</option>
-                            <option value="6">6 hours</option>
-                            <option value="7">7 hours</option>
-                            <option value="8">8 hours</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="promo_id" class="block text-sm font-medium text-gray-300 mb-2">Promo (Optional)</label>
-                        <select name="promo_id" id="promo_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                            <option value="">No Promo</option>
-                            <?php foreach($data['promos'] as $promo): ?>
-                                <option value="<?= $promo->id ?>"><?= htmlspecialchars($promo->promo_name) ?> (<?= $promo->discount_percentage ?>% off)</option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-end">
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                        Book Table & Process Payment
-                    </button>
-                </div>
-            </form>
-        </div>
-        <?php endif; ?>
-
         <!-- Recent Activity and Active Tables -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Recent Bookings -->
@@ -236,6 +158,47 @@
 <script>
 // Set today's date as default
 document.getElementById('date').valueAsDate = new Date();
+
+// Calculate order summary
+function calculateSummary() {
+    const tableSelect = document.getElementById('table_id');
+    const durationSelect = document.getElementById('duration');
+    const promoSelect = document.getElementById('promo_id');
+
+    const selectedTable = tableSelect.options[tableSelect.selectedIndex];
+    const selectedPromo = promoSelect.options[promoSelect.selectedIndex];
+
+    if (!selectedTable || !selectedTable.dataset.price) {
+        document.getElementById('table-price').textContent = 'Rp 0';
+        document.getElementById('subtotal').textContent = 'Rp 0';
+        document.getElementById('discount').textContent = 'Rp 0';
+        document.getElementById('total').textContent = 'Rp 0';
+        document.getElementById('duration-text').textContent = '0 hours';
+        return;
+    }
+
+    const hourlyPrice = parseFloat(selectedTable.dataset.price);
+    const duration = parseInt(durationSelect.value);
+    const discountPercent = selectedPromo.dataset.discount ? parseFloat(selectedPromo.dataset.discount) : 0;
+
+    const subtotal = hourlyPrice * duration;
+    const discountAmount = (subtotal * discountPercent) / 100;
+    const total = subtotal - discountAmount;
+
+    document.getElementById('table-price').textContent = 'Rp ' + hourlyPrice.toLocaleString('id-ID');
+    document.getElementById('duration-text').textContent = duration + ' hours';
+    document.getElementById('subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+    document.getElementById('discount').textContent = 'Rp ' + discountAmount.toLocaleString('id-ID');
+    document.getElementById('total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+}
+
+// Add event listeners to update summary
+document.getElementById('table_id').addEventListener('change', calculateSummary);
+document.getElementById('duration').addEventListener('change', calculateSummary);
+document.getElementById('promo_id').addEventListener('change', calculateSummary);
+
+// Initialize calculation
+calculateSummary();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>

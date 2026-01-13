@@ -112,7 +112,7 @@ class Booking_model {
 
     public function getAll($branch_id = null) {
         if ($branch_id) {
-            $this->db->query("SELECT b.*, COALESCE(u.name, b.customer_name) as customer_name, t.table_number, b.payment_status as status
+            $this->db->query("SELECT b.*, COALESCE(u.name, '') as customer_name, t.table_number, b.payment_status as status
                               FROM bookings b
                               LEFT JOIN users u ON b.user_id = u.id
                               LEFT JOIN tables t ON b.table_id = t.id
@@ -120,7 +120,7 @@ class Booking_model {
                               ORDER BY b.id ASC");
             $this->db->bind('branch_id', $branch_id);
         } else {
-            $this->db->query("SELECT b.*, COALESCE(u.name, b.customer_name) as customer_name, t.table_number, b.payment_status as status
+            $this->db->query("SELECT b.*, COALESCE(u.name, '') as customer_name, t.table_number, b.payment_status as status
                               FROM bookings b
                               LEFT JOIN users u ON b.user_id = u.id
                               LEFT JOIN tables t ON b.table_id = t.id

@@ -22,6 +22,18 @@ class Admin extends Controller {
         $data['members_count'] = count($userModel->getAllMembers());
         $data['recent_bookings'] = $bookingModel->getRecentBookings(5, $branch_id);
 
+        // Tambahkan data untuk cashier section (hanya untuk branch admin)
+        if ($_SESSION['user_role'] === 'branch_admin') {
+            $data['active_bookings'] = $bookingModel->getActiveBookings($branch_id);
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
+        } else {
+            // Untuk super admin, bisa menampilkan data dari semua branches atau default
+            $data['active_bookings'] = $bookingModel->getActiveBookings(); // tanpa branch_id untuk semua cabang
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
+        }
+
         $this->view('admin/index', $data);
     }
 }

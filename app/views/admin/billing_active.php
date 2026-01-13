@@ -33,14 +33,25 @@
         <!-- Branch Filter -->
         <div class="mb-6">
             <label for="branch_filter" class="block text-sm font-medium text-gray-300 mb-2">Filter by Branch:</label>
+            <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
             <select id="branch_filter" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option value="">All Branches</option>
+                <option value="" <?= ($data['branch_id'] === null || $data['branch_id'] === '') ? 'selected' : '' ?>>All Branches</option>
                 <?php foreach($data['branches'] as $branch): ?>
                     <option value="<?= $branch->id ?>" <?= ($data['branch_id'] == $branch->id) ? 'selected' : '' ?>>
                         <?= htmlspecialchars($branch->branch_name) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <?php else: ?>
+            <select id="branch_filter" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
+                <?php foreach($data['branches'] as $branch): ?>
+                    <option value="<?= $branch->id ?>" selected>
+                        <?= htmlspecialchars($branch->branch_name) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <small class="text-gray-400">Branch selection is only available for super admins</small>
+            <?php endif; ?>
         </div>
 
         <!-- Active Tables Grid -->
@@ -50,24 +61,36 @@
                 <p class="text-gray-400">No active tables found.</p>
             <?php else: ?>
                 <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                    <?php foreach($data['tables'] as $table): ?>
+                    <?php foreach($data['tables'] as $table):
+                        $table_type_lower = strtolower($table->type);
+                        $is_available = $table->table_status == 'available';
+
+                        // Determine classes based on table type and availability
+                        if ($table_type_lower === 'vvip') {
+                            if ($is_available) {
+                                $box_classes = "bg-purple-600 text-white"; // VVIP available: purple fill
+                            } else {
+                                $box_classes = "bg-gray-800 border-2 border-purple-500"; // VVIP occupied: purple outline
+                            }
+                        } elseif ($table_type_lower === 'vip') {
+                            if ($is_available) {
+                                $box_classes = "bg-yellow-500 text-gray-900"; // VIP available: yellow fill
+                            } else {
+                                $box_classes = "bg-gray-800 border-2 border-yellow-400"; // VIP occupied: yellow outline
+                            }
+                        } else { // Regular table
+                            if ($is_available) {
+                                $box_classes = "bg-green-500 text-gray-900"; // Regular available: green fill
+                            } else {
+                                $box_classes = "bg-gray-800 border-2 border-green-500"; // Regular occupied: green outline
+                            }
+                        }
+                    ?>
                     <div class="relative">
-                        <div class="aspect-square bg-gray-800 rounded-lg border-2 flex flex-col items-center justify-center p-2
-                            <?php
-                                if($table->table_status == 'available'): echo 'border-green-500';
-                                elseif($table->table_status == 'occupied'): echo 'border-red-500';
-                                else: echo 'border-yellow-500';
-                                endif;
-                            ?>">
-                            <div class="font-bold text-white text-sm">#<?= $table->table_number; ?></div>
-                            <div class="text-xs text-gray-400 mt-1 text-center"><?= $table->branch_name; ?></div>
-                            <div class="text-xs mt-1 text-center
-                                <?php
-                                    if($table->table_status == 'available'): echo 'text-green-500';
-                                    elseif($table->table_status == 'occupied'): echo 'text-red-500';
-                                    else: echo 'text-yellow-500';
-                                    endif;
-                                ?>">
+                        <div class="aspect-square rounded-lg flex flex-col items-center justify-center p-2 <?= $box_classes ?>">
+                            <div class="font-bold text-sm">#<?= $table->table_number; ?></div>
+                            <div class="text-xs mt-1 text-center"><?= ucfirst($table->type); ?></div>
+                            <div class="text-xs mt-1 text-center">
                                 <?= ucfirst($table->table_status); ?>
                             </div>
                         </div>
@@ -80,10 +103,14 @@
 </div>
 
 <script>
+// Hanya jalankan script ini jika pengguna adalah super admin
+<?php if ($_SESSION['user_role'] === 'super_admin'): ?>
 document.getElementById('branch_filter').addEventListener('change', function() {
     const branchId = this.value;
-    window.location.href = '<?= BASEURL; ?>/admin/billing_active' + (branchId ? '/' + branchId : '');
+    // Redirect ke halaman billing dengan parameter GET
+    window.location.href = '<?= BASEURL; ?>/admin/billing?branch_id=' + branchId;
 });
+<?php endif; ?>
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>

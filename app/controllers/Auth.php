@@ -35,7 +35,12 @@ class Auth extends Controller {
             $_SESSION['user_id'] = $user->id;
             $_SESSION['user_name'] = $user->name;
             $_SESSION['user_role'] = $user->role;
-            
+
+            // Set branch_id for branch admins
+            if($user->role == 'branch_admin' && isset($user->branch_id)) {
+                $_SESSION['branch_id'] = $user->branch_id;
+            }
+
             // Redirect berdasarkan role
             if($user->role == 'super_admin' || $user->role == 'branch_admin') {
                 header('Location: ' . BASEURL . '/admin');
