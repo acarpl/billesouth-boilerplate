@@ -16,7 +16,7 @@ class Products extends Controller {
     public function index() {
         $productModel = $this->model('Product_model');
 
-        $data['judul'] = 'Product Management - Bille Billiards';
+        $data['judul'] = 'Manajemen Produk - Bille Billiards';
         // Get branch ID from session or default to 1
         $branch_id = $_SESSION['branch_id'] ?? 1;
         $data['products'] = $productModel->getAllForBranch($branch_id);
@@ -25,8 +25,8 @@ class Products extends Controller {
     }
 
     public function create() {
-        $data['judul'] = 'Add New Product - Bille Billiards';
-        
+        $data['judul'] = 'Tambah Produk Baru - Bille Billiards';
+
         $this->view('admin/products/create', $data);
     }
 
@@ -35,7 +35,7 @@ class Products extends Controller {
 
         // Validate input
         if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            Flasher::setFlash('error', 'Product name, price, and category are required');
+            Flasher::setFlash('error', 'Nama produk, harga, dan kategori diperlukan');
             header('Location: ' . BASEURL . '/admin/products/create');
             exit;
         }
@@ -77,9 +77,9 @@ class Products extends Controller {
         }
 
         if($productModel->create($data, $branch_context)) {
-            Flasher::setFlash('success', 'Product added successfully');
+            Flasher::setFlash('success', 'Produk berhasil ditambahkan');
         } else {
-            Flasher::setFlash('error', 'Failed to add product');
+            Flasher::setFlash('error', 'Gagal menambahkan produk');
         }
 
         header('Location: ' . BASEURL . '/admin/products');
@@ -89,11 +89,11 @@ class Products extends Controller {
     public function edit($id) {
         $productModel = $this->model('Product_model');
 
-        $data['judul'] = 'Edit Product - Bille Billiards';
+        $data['judul'] = 'Edit Produk - Bille Billiards';
         $data['product'] = $productModel->getById($id);
 
         if(!$data['product']) {
-            Flasher::setFlash('error', 'Product not found');
+            Flasher::setFlash('error', 'Produk tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/products');
             exit;
         }
@@ -106,7 +106,7 @@ class Products extends Controller {
 
         // Validate input
         if(empty($_POST['name']) || empty($_POST['price']) || empty($_POST['category_id'])) {
-            Flasher::setFlash('error', 'Product name, price, and category are required');
+            Flasher::setFlash('error', 'Nama produk, harga, dan kategori diperlukan');
             header('Location: ' . BASEURL . '/admin/products/edit/' . $id);
             exit;
         }
@@ -146,9 +146,9 @@ class Products extends Controller {
         ];
 
         if($productModel->update($id, $data)) {
-            Flasher::setFlash('success', 'Product updated successfully');
+            Flasher::setFlash('success', 'Produk berhasil diperbarui');
         } else {
-            Flasher::setFlash('error', 'Failed to update product');
+            Flasher::setFlash('error', 'Gagal memperbarui produk');
         }
 
         header('Location: ' . BASEURL . '/admin/products');
@@ -162,7 +162,7 @@ class Products extends Controller {
         $product = $productModel->getById($id);
 
         if(!$product) {
-            Flasher::setFlash('error', 'Product not found');
+            Flasher::setFlash('error', 'Produk tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/products');
             exit;
         }
@@ -178,9 +178,9 @@ class Products extends Controller {
                 unlink($_SERVER['DOCUMENT_ROOT'] . '/billesouth-boilerplate/' . $product->image);
             }
 
-            Flasher::setFlash('success', 'Product deleted successfully');
+            Flasher::setFlash('success', 'Produk berhasil dihapus');
         } else {
-            Flasher::setFlash('error', 'Failed to delete product');
+            Flasher::setFlash('error', 'Gagal menghapus produk');
         }
 
         header('Location: ' . BASEURL . '/admin/products');

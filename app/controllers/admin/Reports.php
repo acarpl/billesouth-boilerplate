@@ -16,7 +16,7 @@ class Reports extends Controller {
     public function index() {
         $reportModel = $this->model('Report_model');
 
-        $data['judul'] = 'Revenue Reports - Bille Billiards';
+        $data['judul'] = 'Laporan Pendapatan - Bille Billiards';
 
         // Get branch ID from session for branch admins, super admins can see all
         $branch_id = null;
@@ -36,7 +36,7 @@ class Reports extends Controller {
         $reportModel = $this->model('Report_model');
 
         $date = $_GET['date'] ?? date('Y-m-d');
-        $data['judul'] = 'Daily Revenue Report - Bille Billiards';
+        $data['judul'] = 'Laporan Pendapatan Harian - Bille Billiards';
         $data['date'] = $date;
 
         // Get branch ID from session for branch admins, super admins can see all
@@ -55,7 +55,7 @@ class Reports extends Controller {
         $reportModel = $this->model('Report_model');
 
         $month = $_GET['month'] ?? date('Y-m');
-        $data['judul'] = 'Monthly Revenue Report - Bille Billiards';
+        $data['judul'] = 'Laporan Pendapatan Bulanan - Bille Billiards';
         $data['month'] = $month;
 
         // Get branch ID from session for branch admins, super admins can see all
@@ -74,7 +74,7 @@ class Reports extends Controller {
         $reportModel = $this->model('Report_model');
 
         $year = $_GET['year'] ?? date('Y');
-        $data['judul'] = 'Yearly Revenue Report - Bille Billiards';
+        $data['judul'] = 'Laporan Pendapatan Tahunan - Bille Billiards';
         $data['year'] = $year;
 
         // Get branch ID from session for branch admins, super admins can see all

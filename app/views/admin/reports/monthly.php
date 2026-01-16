@@ -26,8 +26,8 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Monthly Revenue Report</h1>
-            <p class="text-gray-400">Revenue details for <?= date('F Y', strtotime($month . '-01')); ?></p>
+            <h1 class="text-3xl font-bold text-white">Laporan Pendapatan Bulanan</h1>
+            <p class="text-gray-400">Rincian pendapatan untuk <?= date('F Y', strtotime($month . '-01')); ?></p>
         </div>
 
         <!-- Monthly Summary Cards -->
@@ -38,7 +38,7 @@
                         <i class="fas fa-shopping-cart text-blue-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">Total Orders</p>
+                        <p class="text-gray-400 text-sm">Total Pesanan</p>
                         <p class="text-2xl font-bold text-white">
                             <?= $revenue_data ? $revenue_data->total_orders : 0; ?>
                         </p>
@@ -52,7 +52,7 @@
                         <i class="fas fa-dollar-sign text-green-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">Total Revenue</p>
+                        <p class="text-gray-400 text-sm">Total Pendapatan</p>
                         <p class="text-2xl font-bold text-white">
                             Rp <?= $revenue_data ? number_format($revenue_data->total_revenue, 0, ',', '.') : '0'; ?>
                         </p>
@@ -66,7 +66,7 @@
                         <i class="fas fa-tag text-yellow-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">Avg. Order Value</p>
+                        <p class="text-gray-400 text-sm">Nilai Rata-rata Pesanan</p>
                         <p class="text-2xl font-bold text-white">
                             Rp <?= $revenue_data ? number_format($revenue_data->average_order_value, 0, ',', '.') : '0'; ?>
                         </p>
@@ -80,7 +80,7 @@
                         <i class="fas fa-chart-bar text-purple-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">Days Active</p>
+                        <p class="text-gray-400 text-sm">Hari Aktif</p>
                         <p class="text-2xl font-bold text-white">
                             <?= count($daily_breakdown); ?>
                         </p>
@@ -89,24 +89,24 @@
             </div>
         </div>
 
-        <!-- Daily Breakdown Chart -->
+        <!-- Grafik Rincian Harian -->
         <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-8">
-            <h2 class="text-xl font-bold text-white mb-4">Daily Revenue Breakdown</h2>
+            <h2 class="text-xl font-bold text-white mb-4">Rincian Pendapatan Harian</h2>
             <div class="overflow-x-auto">
                 <canvas id="dailyRevenueChart" width="400" height="200"></canvas>
             </div>
         </div>
 
-        <!-- Daily Breakdown Table -->
+        <!-- Tabel Rincian Harian -->
         <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-            <h2 class="text-xl font-bold text-white mb-4">Daily Revenue Details</h2>
+            <h2 class="text-xl font-bold text-white mb-4">Rincian Pendapatan Harian</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-400">
                     <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                         <tr>
-                            <th class="px-4 py-3">Date</th>
-                            <th class="px-4 py-3">Orders</th>
-                            <th class="px-4 py-3">Revenue</th>
+                            <th class="px-4 py-3">Tanggal</th>
+                            <th class="px-4 py-3">Pesanan</th>
+                            <th class="px-4 py-3">Pendapatan</th>
                         </tr>
                     </thead>
                     <tbody>

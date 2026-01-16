@@ -72,4 +72,13 @@ class Booking extends Controller {
         $this->view('booking/payment', $data);
         $this->view('templates/footer');
     }
+
+    public function confirmPayment($booking_code) {
+        // Proses konfirmasi pembayaran
+        if ($this->model('Booking_model')->confirmPayment($booking_code)) {
+            echo "<script>alert('Pembayaran berhasil dikonfirmasi!'); window.location='".BASEURL."/booking/success/".$booking_code."';</script>";
+        } else {
+            echo "<script>alert('Gagal mengonfirmasi pembayaran!'); window.history.back();</script>";
+        }
+    }
 }

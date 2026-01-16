@@ -26,8 +26,8 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Order Management</h1>
-            <p class="text-gray-400">Manage merchandise orders and their status</p>
+            <h1 class="text-3xl font-bold text-white">Manajemen Pesanan</h1>
+            <p class="text-gray-400">Kelola pesanan merchandise dan statusnya</p>
         </div>
 
         <!-- Success/Error Messages -->
@@ -43,13 +43,13 @@
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Order ID</th>
-                        <th class="px-4 py-3">Customer</th>
-                        <th class="px-4 py-3">Date</th>
+                        <th class="px-4 py-3">ID Pesanan</th>
+                        <th class="px-4 py-3">Pelanggan</th>
+                        <th class="px-4 py-3">Tanggal</th>
                         <th class="px-4 py-3">Total</th>
-                        <th class="px-4 py-3">Payment Method</th>
+                        <th class="px-4 py-3">Metode Pembayaran</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Actions</th>
+                        <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,8 +81,18 @@
                                         foreach($statuses as $status):
                                             $selected = ($order->status === $status) ? 'selected' : '';
                                             $classes = $status_classes[$status] ?? 'bg-gray-500/20 text-gray-500';
+                                            // Translate status to Indonesian
+                                            $status_indo = [
+                                                'Paid' => 'Lunas',
+                                                'Pending' => 'Tertunda',
+                                                'Processing' => 'Diproses',
+                                                'Shipped' => 'Dikirim',
+                                                'Delivered' => 'Diterima',
+                                                'Cancelled' => 'Dibatalkan'
+                                            ];
+                                            $display_status = $status_indo[$status] ?? $status;
                                     ?>
-                                        <option value="<?= $status; ?>" class="<?= $classes; ?>" <?= $selected; ?>><?= $status; ?></option>
+                                        <option value="<?= $status; ?>" class="<?= $classes; ?>" <?= $selected; ?>><?= $display_status; ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </form>
@@ -99,7 +109,7 @@
             
             <?php if(empty($orders)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No orders found.</p>
+                    <p>Tidak ada pesanan ditemukan.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -107,11 +117,11 @@
 </div>
 
 <script>
-// Confirmation for status change
+// Konfirmasi untuk perubahan status
 document.querySelectorAll('select[name="status"]').forEach(select => {
     select.addEventListener('change', function() {
-        if(!confirm('Are you sure you want to change the order status?')) {
-            // Reset to previous value
+        if(!confirm('Apakah Anda yakin ingin mengubah status pesanan?')) {
+            // Reset ke nilai sebelumnya
             this.selectedIndex = Array.from(this.options).findIndex(option => option.defaultSelected);
         }
     });

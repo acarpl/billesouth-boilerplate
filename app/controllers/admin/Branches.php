@@ -15,7 +15,7 @@ class Branches extends Controller {
 
     public function index() {
         $branchModel = $this->model('Branch_model');
-        $data['judul'] = 'Branch Management - Bille Billiards';
+        $data['judul'] = 'Manajemen Cabang - Bille Billiards';
         $data['branches'] = $branchModel->getAll();
         
         $this->view('admin/branches/index', $data);

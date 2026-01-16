@@ -27,58 +27,58 @@
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="max-w-2xl mx-auto">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Add New Product</h1>
-                <p class="text-gray-400">Enter product details below</p>
+                <h1 class="text-3xl font-bold text-white">Tambah Produk Baru</h1>
+                <p class="text-gray-400">Masukkan detail produk di bawah ini</p>
             </div>
 
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
                 <form action="<?= BASEURL; ?>/admin/products/store" method="POST" enctype="multipart/form-data">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Product Name</label>
-                            <input type="text" name="name" id="name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter product name" required>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Nama Produk</label>
+                            <input type="text" name="name" id="name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nama produk" required>
                         </div>
 
                         <div>
-                            <label for="category_id" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                            <label for="category_id" class="block text-sm font-medium text-gray-300 mb-2">Kategori</label>
                             <select name="category_id" id="category_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                <option value="">Select a category</option>
-                                <option value="1">Merchandise</option>
-                                <option value="2">F&B</option>
+                                <option value="">Pilih kategori</option>
+                                <option value="1">Barang Dagangan</option>
+                                <option value="2">Makanan & Minuman</option>
                             </select>
                         </div>
 
                         <div>
-                            <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                            <textarea name="description" id="description" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter product description"></textarea>
+                            <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Deskripsi</label>
+                            <textarea name="description" id="description" rows="3" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan deskripsi produk"></textarea>
                         </div>
 
                         <div>
-                            <label for="price" class="block text-sm font-medium text-gray-300 mb-2">Price (Rp)</label>
-                            <input type="number" name="price" id="price" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter price" required>
+                            <label for="price" class="block text-sm font-medium text-gray-300 mb-2">Harga (Rp)</label>
+                            <input type="number" name="price" id="price" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan harga" required>
                         </div>
 
                         <div>
-                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Active Status</label>
+                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Status Aktif</label>
                             <div class="flex items-center">
                                 <input type="checkbox" name="is_active" id="is_active" class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500" checked>
-                                <label for="is_active" class="ml-2 text-sm text-gray-300">Product is active</label>
+                                <label for="is_active" class="ml-2 text-sm text-gray-300">Produk aktif</label>
                             </div>
                         </div>
 
                         <div>
-                            <label for="image" class="block text-sm font-medium text-gray-300 mb-2">Product Image</label>
+                            <label for="image" class="block text-sm font-medium text-gray-300 mb-2">Gambar Produk</label>
                             <input type="file" name="image" id="image" accept="image/*" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                            <p class="mt-1 text-sm text-gray-500">Upload a product image (optional)</p>
+                            <p class="mt-1 text-sm text-gray-500">Unggah gambar produk (opsional)</p>
                         </div>
                     </div>
 
                     <div class="mt-8 flex space-x-4">
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                            Save Product
+                            Simpan Produk
                         </button>
                         <a href="<?= BASEURL; ?>/admin/products" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg">
-                            Cancel
+                            Batal
                         </a>
                     </div>
                 </form>

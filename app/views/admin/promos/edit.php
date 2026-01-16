@@ -28,16 +28,16 @@
         <div class="max-w-2xl mx-auto">
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-white">Edit Promo</h1>
-                <p class="text-gray-400">Update promo details below</p>
+                <p class="text-gray-400">Perbarui detail promo di bawah ini</p>
             </div>
 
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
                 <form action="<?= BASEURL; ?>/admin/promos/update/<?= $promo->id; ?>" method="POST">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <label for="branch_id" class="block text-sm font-medium text-gray-300 mb-2">Branch (optional)</label>
+                            <label for="branch_id" class="block text-sm font-medium text-gray-300 mb-2">Cabang (opsional)</label>
                             <select name="branch_id" id="branch_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="">All Branches</option>
+                                <option value="">Semua Cabang</option>
                                 <?php
                                 $branchModel = $this->model('Branch_model');
                                 $branches = $branchModel->getAll();
@@ -48,70 +48,70 @@
                         </div>
 
                         <div>
-                            <label for="code" class="block text-sm font-medium text-gray-300 mb-2">Promo Code</label>
+                            <label for="code" class="block text-sm font-medium text-gray-300 mb-2">Kode Promo</label>
                             <input type="text" name="code" id="code" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= htmlspecialchars($promo->code); ?>" required>
-                            <p class="mt-1 text-sm text-gray-500">Will be converted to uppercase automatically</p>
+                            <p class="mt-1 text-sm text-gray-500">Akan diubah menjadi huruf kapital secara otomatis</p>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="discount_type" class="block text-sm font-medium text-gray-300 mb-2">Discount Type</label>
+                                <label for="discount_type" class="block text-sm font-medium text-gray-300 mb-2">Jenis Diskon</label>
                                 <select name="discount_type" id="discount_type" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                    <option value="percentage" <?= $promo->discount_type == 'percentage' ? 'selected' : '' ?>>Percentage (%)</option>
-                                    <option value="fixed" <?= $promo->discount_type == 'fixed' ? 'selected' : '' ?>>Fixed Amount (Rp)</option>
+                                    <option value="percentage" <?= $promo->discount_type == 'percentage' ? 'selected' : '' ?>>Persentase (%)</option>
+                                    <option value="fixed" <?= $promo->discount_type == 'fixed' ? 'selected' : '' ?>>Jumlah Tetap (Rp)</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label for="discount_value" class="block text-sm font-medium text-gray-300 mb-2">Discount Value</label>
+                                <label for="discount_value" class="block text-sm font-medium text-gray-300 mb-2">Nilai Diskon</label>
                                 <input type="number" name="discount_value" id="discount_value" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->discount_value; ?>" required min="0">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="min_purchase" class="block text-sm font-medium text-gray-300 mb-2">Minimum Purchase (Rp)</label>
+                                <label for="min_purchase" class="block text-sm font-medium text-gray-300 mb-2">Minimal Pembelian (Rp)</label>
                                 <input type="number" name="min_purchase" id="min_purchase" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->min_purchase; ?>" min="0">
                             </div>
 
                             <div>
-                                <label for="max_discount" class="block text-sm font-medium text-gray-300 mb-2">Maximum Discount (Rp)</label>
+                                <label for="max_discount" class="block text-sm font-medium text-gray-300 mb-2">Maksimal Diskon (Rp)</label>
                                 <input type="number" name="max_discount" id="max_discount" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->max_discount; ?>" min="0">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="start_date" class="block text-sm font-medium text-gray-300 mb-2">Start Date</label>
+                                <label for="start_date" class="block text-sm font-medium text-gray-300 mb-2">Tanggal Mulai</label>
                                 <input type="date" name="start_date" id="start_date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->start_date; ?>" required>
                             </div>
 
                             <div>
-                                <label for="end_date" class="block text-sm font-medium text-gray-300 mb-2">End Date</label>
+                                <label for="end_date" class="block text-sm font-medium text-gray-300 mb-2">Tanggal Akhir</label>
                                 <input type="date" name="end_date" id="end_date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->end_date; ?>" required>
                             </div>
                         </div>
 
                         <div>
-                            <label for="usage_limit" class="block text-sm font-medium text-gray-300 mb-2">Usage Limit</label>
+                            <label for="usage_limit" class="block text-sm font-medium text-gray-300 mb-2">Batas Penggunaan</label>
                             <input type="number" name="usage_limit" id="usage_limit" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" value="<?= $promo->usage_limit; ?>" min="0">
                         </div>
 
                         <div>
-                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Active Status</label>
+                            <label for="is_active" class="block text-sm font-medium text-gray-300 mb-2">Status Aktif</label>
                             <div class="flex items-center">
                                 <input type="checkbox" name="is_active" id="is_active" class="w-4 h-4 text-blue-600 bg-gray-800 border-gray-700 rounded focus:ring-blue-500" <?= $promo->is_active ? 'checked' : ''; ?>>
-                                <label for="is_active" class="ml-2 text-sm text-gray-300">Promo is active</label>
+                                <label for="is_active" class="ml-2 text-sm text-gray-300">Promo aktif</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-8 flex space-x-4">
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                            Update Promo
+                            Perbarui Promo
                         </button>
                         <a href="<?= BASEURL; ?>/admin/promos" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg">
-                            Cancel
+                            Batal
                         </a>
                     </div>
                 </form>

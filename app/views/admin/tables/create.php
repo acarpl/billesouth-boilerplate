@@ -27,22 +27,22 @@
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="max-w-2xl mx-auto">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Add New Table</h1>
-                <p class="text-gray-400">Enter table details below</p>
+                <h1 class="text-3xl font-bold text-white">Tambah Meja Baru</h1>
+                <p class="text-gray-400">Masukkan detail meja di bawah ini</p>
             </div>
 
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
                 <form action="<?= BASEURL; ?>/admin/tables/store" method="POST">
                     <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <label for="table_number" class="block text-sm font-medium text-gray-300 mb-2">Table Number</label>
-                            <input type="text" name="table_number" id="table_number" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter table number" required>
+                            <label for="table_number" class="block text-sm font-medium text-gray-300 mb-2">Nomor Meja</label>
+                            <input type="text" name="table_number" id="table_number" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nomor meja" required>
                         </div>
 
                         <div>
-                            <label for="branch_id" class="block text-sm font-medium text-gray-300 mb-2">Branch</label>
+                            <label for="branch_id" class="block text-sm font-medium text-gray-300 mb-2">Cabang</label>
                             <select name="branch_id" id="branch_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                <option value="">Select a branch</option>
+                                <option value="">Pilih cabang</option>
                                 <?php foreach($branches as $branch): ?>
                                     <option value="<?= $branch->id ?>"><?= htmlspecialchars($branch->branch_name) ?></option>
                                 <?php endforeach; ?>
@@ -50,14 +50,14 @@
                         </div>
 
                         <div>
-                            <label for="price_per_hour" class="block text-sm font-medium text-gray-300 mb-2">Price Per Hour (Rp)</label>
-                            <input type="number" name="price_per_hour" id="price_per_hour" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter price per hour" required min="0">
+                            <label for="price_per_hour" class="block text-sm font-medium text-gray-300 mb-2">Harga Per Jam (Rp)</label>
+                            <input type="number" name="price_per_hour" id="price_per_hour" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan harga per jam" required min="0">
                         </div>
 
                         <div>
-                            <label for="type" class="block text-sm font-medium text-gray-300 mb-2">Table Type</label>
+                            <label for="type" class="block text-sm font-medium text-gray-300 mb-2">Tipe Meja</label>
                             <select name="type" id="type" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="Regular">Regular</option>
+                                <option value="Regular">Biasa</option>
                                 <option value="VIP">VIP</option>
                                 <option value="VVIP">VVIP</option>
                             </select>
@@ -66,20 +66,20 @@
                         <div>
                             <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
                             <select name="status" id="status" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="Available">Available</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Occupied">Occupied</option>
-                                <option value="Maintenance">Maintenance</option>
+                                <option value="Available">Tersedia</option>
+                                <option value="Pending">Tertunda</option>
+                                <option value="Occupied">Ditempati</option>
+                                <option value="Maintenance">Perawatan</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="mt-8 flex space-x-4">
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                            Save Table
+                            Simpan Meja
                         </button>
                         <a href="<?= BASEURL; ?>/admin/tables" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg">
-                            Cancel
+                            Batal
                         </a>
                     </div>
                 </form>

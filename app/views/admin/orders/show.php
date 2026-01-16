@@ -26,22 +26,22 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Order Details</h1>
-            <p class="text-gray-400">Order #<?= $order->id; ?> - <?= date('M d, Y H:i', strtotime($order->created_at)); ?></p>
+            <h1 class="text-3xl font-bold text-white">Detail Pesanan</h1>
+            <p class="text-gray-400">Pesanan #<?= $order->id; ?> - <?= date('d M Y H:i', strtotime($order->created_at)); ?></p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Order Information -->
             <div class="lg:col-span-2">
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 mb-6">
-                    <h2 class="text-xl font-bold text-white mb-4">Order Items</h2>
+                    <h2 class="text-xl font-bold text-white mb-4">Item Pesanan</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-400">
                             <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                                 <tr>
-                                    <th class="px-4 py-3">Product</th>
-                                    <th class="px-4 py-3">Price</th>
-                                    <th class="px-4 py-3">Qty</th>
+                                    <th class="px-4 py-3">Produk</th>
+                                    <th class="px-4 py-3">Harga</th>
+                                    <th class="px-4 py-3">Jumlah</th>
                                     <th class="px-4 py-3">Subtotal</th>
                                 </tr>
                             </thead>
@@ -73,7 +73,7 @@
                 <!-- Order Notes -->
                 <?php if($order->notes): ?>
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                    <h2 class="text-xl font-bold text-white mb-4">Order Notes</h2>
+                    <h2 class="text-xl font-bold text-white mb-4">Catatan Pesanan</h2>
                     <p class="text-gray-300"><?= htmlspecialchars($order->notes); ?></p>
                 </div>
                 <?php endif; ?>
@@ -82,47 +82,47 @@
             <!-- Order Summary -->
             <div>
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                    <h2 class="text-xl font-bold text-white mb-4">Order Summary</h2>
-                    
+                    <h2 class="text-xl font-bold text-white mb-4">Ringkasan Pesanan</h2>
+
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between">
-                            <span class="text-gray-400">Order ID:</span>
+                            <span class="text-gray-400">ID Pesanan:</span>
                             <span class="text-white">#<?= $order->id; ?></span>
                         </div>
-                        
+
                         <div class="flex justify-between">
-                            <span class="text-gray-400">Date:</span>
-                            <span class="text-white"><?= date('M d, Y H:i', strtotime($order->created_at)); ?></span>
+                            <span class="text-gray-400">Tanggal:</span>
+                            <span class="text-white"><?= date('d M Y H:i', strtotime($order->created_at)); ?></span>
                         </div>
-                        
+
                         <div class="flex justify-between">
-                            <span class="text-gray-400">Payment Method:</span>
+                            <span class="text-gray-400">Metode Pembayaran:</span>
                             <span class="text-white"><?= ucfirst($order->payment_method); ?></span>
                         </div>
-                        
+
                         <div class="flex justify-between">
-                            <span class="text-gray-400">Payment Status:</span>
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
+                            <span class="text-gray-400">Status Pembayaran:</span>
+                            <span class="px-2 py-1 text-xs rounded-full
+                                <?php
                                     if($order->payment_status == 'paid'): echo 'bg-green-500/20 text-green-500';
                                     elseif($order->payment_status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
                                     else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
+                                    endif;
                                 ?>">
                                 <?= ucfirst($order->payment_status); ?>
                             </span>
                         </div>
-                        
+
                         <div class="flex justify-between">
-                            <span class="text-gray-400">Order Status:</span>
-                            <span class="px-2 py-1 text-xs rounded-full 
-                                <?php 
+                            <span class="text-gray-400">Status Pesanan:</span>
+                            <span class="px-2 py-1 text-xs rounded-full
+                                <?php
                                     if($order->status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
                                     elseif($order->status == 'processing'): echo 'bg-blue-500/20 text-blue-500';
                                     elseif($order->status == 'shipped'): echo 'bg-indigo-500/20 text-indigo-500';
                                     elseif($order->status == 'delivered'): echo 'bg-green-500/20 text-green-500';
                                     else: echo 'bg-red-500/20 text-red-500';
-                                    endif; 
+                                    endif;
                                 ?>">
                                 <?= ucfirst($order->status); ?>
                             </span>
@@ -139,31 +139,31 @@
 
                 <!-- Customer Information -->
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 mt-6">
-                    <h2 class="text-xl font-bold text-white mb-4">Customer Information</h2>
-                    
+                    <h2 class="text-xl font-bold text-white mb-4">Informasi Pelanggan</h2>
+
                     <div class="space-y-3">
                         <div>
-                            <span class="text-gray-400 text-sm">Name:</span>
+                            <span class="text-gray-400 text-sm">Nama:</span>
                             <p class="text-white"><?= htmlspecialchars($order->customer_name ?? 'Guest'); ?></p>
                         </div>
-                        
+
                         <?php if($order->customer_email): ?>
                         <div>
                             <span class="text-gray-400 text-sm">Email:</span>
                             <p class="text-white"><?= htmlspecialchars($order->customer_email); ?></p>
                         </div>
                         <?php endif; ?>
-                        
+
                         <?php if($order->customer_phone): ?>
                         <div>
-                            <span class="text-gray-400 text-sm">Phone:</span>
+                            <span class="text-gray-400 text-sm">Telepon:</span>
                             <p class="text-white"><?= htmlspecialchars($order->customer_phone); ?></p>
                         </div>
                         <?php endif; ?>
-                        
+
                         <?php if($order->shipping_address): ?>
                         <div>
-                            <span class="text-gray-400 text-sm">Shipping Address:</span>
+                            <span class="text-gray-400 text-sm">Alamat Pengiriman:</span>
                             <p class="text-white"><?= htmlspecialchars($order->shipping_address); ?></p>
                         </div>
                         <?php endif; ?>
@@ -172,22 +172,22 @@
 
                 <!-- Update Status Form -->
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 mt-6">
-                    <h2 class="text-xl font-bold text-white mb-4">Update Order Status</h2>
-                    
+                    <h2 class="text-xl font-bold text-white mb-4">Perbarui Status Pesanan</h2>
+
                     <form method="POST" action="<?= BASEURL; ?>/admin/orders/updateStatus/<?= $order->id; ?>">
                         <div class="mb-4">
-                            <label for="status" class="block text-sm font-medium text-gray-300 mb-2">New Status</label>
+                            <label for="status" class="block text-sm font-medium text-gray-300 mb-2">Status Baru</label>
                             <select name="status" id="status" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                <option value="pending" <?= $order->status == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                                <option value="processing" <?= $order->status == 'processing' ? 'selected' : ''; ?>>Processing</option>
-                                <option value="shipped" <?= $order->status == 'shipped' ? 'selected' : ''; ?>>Shipped</option>
-                                <option value="delivered" <?= $order->status == 'delivered' ? 'selected' : ''; ?>>Delivered</option>
-                                <option value="cancelled" <?= $order->status == 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                <option value="pending" <?= $order->status == 'pending' ? 'selected' : ''; ?>>Tertunda</option>
+                                <option value="processing" <?= $order->status == 'processing' ? 'selected' : ''; ?>>Diproses</option>
+                                <option value="shipped" <?= $order->status == 'shipped' ? 'selected' : ''; ?>>Dikirim</option>
+                                <option value="delivered" <?= $order->status == 'delivered' ? 'selected' : ''; ?>>Diterima</option>
+                                <option value="cancelled" <?= $order->status == 'cancelled' ? 'selected' : ''; ?>>Dibatalkan</option>
                             </select>
                         </div>
-                        
+
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
-                            Update Status
+                            Perbarui Status
                         </button>
                     </form>
                 </div>

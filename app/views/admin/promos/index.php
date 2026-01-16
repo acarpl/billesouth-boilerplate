@@ -26,13 +26,13 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Promo Management</h1>
-            <p class="text-gray-400">Manage your billiard parlor promotions and discounts</p>
+            <h1 class="text-3xl font-bold text-white">Manajemen Promo</h1>
+            <p class="text-gray-400">Kelola promosi dan diskon tempat biliar Anda</p>
         </div>
 
         <div class="mb-6">
             <a href="<?= BASEURL; ?>/admin/promos/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add New Promo
+                <i class="fas fa-plus mr-2"></i> Tambah Promo Baru
             </a>
         </div>
 
@@ -49,16 +49,16 @@
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Code</th>
-                        <th class="px-4 py-3">Branch</th>
-                        <th class="px-4 py-3">Discount</th>
-                        <th class="px-4 py-3">Min Purchase</th>
-                        <th class="px-4 py-3">Max Discount</th>
-                        <th class="px-4 py-3">Start Date</th>
-                        <th class="px-4 py-3">End Date</th>
-                        <th class="px-4 py-3">Usage</th>
+                        <th class="px-4 py-3">Kode</th>
+                        <th class="px-4 py-3">Cabang</th>
+                        <th class="px-4 py-3">Diskon</th>
+                        <th class="px-4 py-3">Minimal Belanja</th>
+                        <th class="px-4 py-3">Maksimal Diskon</th>
+                        <th class="px-4 py-3">Tanggal Mulai</th>
+                        <th class="px-4 py-3">Tanggal Akhir</th>
+                        <th class="px-4 py-3">Penggunaan</th>
                         <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Actions</th>
+                        <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,7 +74,7 @@
                                 </span>
                             <?php else: ?>
                                 <span class="px-2 py-1 text-xs rounded-full bg-gray-500/20 text-gray-500">
-                                    All Branches
+                                    Semua Cabang
                                 </span>
                             <?php endif; ?>
                         </td>
@@ -100,7 +100,7 @@
                                 </span>
                             <?php else: ?>
                                 <span class="px-2 py-1 text-xs rounded-full bg-gray-500/20 text-gray-500">
-                                    Unlimited
+                                    Tak Terbatas
                                 </span>
                             <?php endif; ?>
                         </td>
@@ -111,7 +111,7 @@
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= $promo->is_active ? 'Active' : 'Inactive'; ?>
+                                <?= $promo->is_active ? 'Aktif' : 'Nonaktif'; ?>
                             </span>
                         </td>
                         <td class="px-4 py-3">
@@ -131,7 +131,7 @@
 
             <?php if(empty($promos)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No promos found. <a href="<?= BASEURL; ?>/admin/promos/create" class="text-blue-500 hover:underline">Add your first promo</a>.</p>
+                    <p>Tidak ada promos ditemukan. <a href="<?= BASEURL; ?>/admin/promos/create" class="text-blue-500 hover:underline">Tambahkan promo pertama Anda</a>.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -140,7 +140,7 @@
 
 <script>
 function confirmDelete(id) {
-    if(confirm('Are you sure you want to delete this promo?')) {
+    if(confirm('Apakah Anda yakin ingin menghapus promo ini?')) {
         // Create a form and submit it to delete the promo
         const form = document.createElement('form');
         form.method = 'POST';

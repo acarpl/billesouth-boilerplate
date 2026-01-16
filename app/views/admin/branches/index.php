@@ -26,13 +26,13 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Branch Management</h1>
-            <p class="text-gray-400">Manage your billiard parlor branches</p>
+            <h1 class="text-3xl font-bold text-white">Manajemen Cabang</h1>
+            <p class="text-gray-400">Kelola cabang tempat biliar Anda</p>
         </div>
 
         <div class="mb-6">
             <a href="<?= BASEURL; ?>/admin/branches/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add New Branch
+                <i class="fas fa-plus mr-2"></i> Tambah Cabang Baru
             </a>
         </div>
 
@@ -49,11 +49,11 @@
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Branch Name</th>
-                        <th class="px-4 py-3">Location</th>
-                        <th class="px-4 py-3">Phone</th>
-                        <th class="px-4 py-3">Opening Hours</th>
-                        <th class="px-4 py-3">Actions</th>
+                        <th class="px-4 py-3">Nama Cabang</th>
+                        <th class="px-4 py-3">Lokasi</th>
+                        <th class="px-4 py-3">Telepon</th>
+                        <th class="px-4 py-3">Jam Operasional</th>
+                        <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +80,7 @@
             
             <?php if(empty($branches)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No branches found. <a href="<?= BASEURL; ?>/admin/branches/create" class="text-blue-500 hover:underline">Add your first branch</a>.</p>
+                    <p>Cabang tidak ditemukan. <a href="<?= BASEURL; ?>/admin/branches/create" class="text-blue-500 hover:underline">Add your first branch</a>.</p>
                 </div>
             <?php endif; ?>
         </div>

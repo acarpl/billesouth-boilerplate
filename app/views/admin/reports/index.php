@@ -26,8 +26,8 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Revenue Reports</h1>
-            <p class="text-gray-400">Analyze your billiard parlor revenue and sales</p>
+            <h1 class="text-3xl font-bold text-white">Laporan Pendapatan</h1>
+            <p class="text-gray-400">Analisis pendapatan dan penjualan tempat biliar Anda</p>
         </div>
 
         <!-- Revenue Summary Cards -->
@@ -38,7 +38,7 @@
                         <i class="fas fa-calendar-day text-blue-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">Today's Revenue</p>
+                        <p class="text-gray-400 text-sm">Pendapatan Hari Ini</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($daily_revenue): ?>
                                 Rp <?= number_format($daily_revenue->revenue ?? 0, 0, ',', '.'); ?>
@@ -56,7 +56,7 @@
                         <i class="fas fa-calendar-week text-green-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">This Month's Revenue</p>
+                        <p class="text-gray-400 text-sm">Pendapatan Bulan Ini</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($monthly_revenue): ?>
                                 Rp <?= number_format($monthly_revenue->revenue ?? 0, 0, ',', '.'); ?>
@@ -74,7 +74,7 @@
                         <i class="fas fa-calendar-alt text-purple-500 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-400 text-sm">This Year's Revenue</p>
+                        <p class="text-gray-400 text-sm">Pendapatan Tahun Ini</p>
                         <p class="text-2xl font-bold text-white">
                             <?php if($yearly_revenue): ?>
                                 Rp <?= number_format($yearly_revenue->revenue ?? 0, 0, ',', '.'); ?>
@@ -90,14 +90,14 @@
         <!-- Top Selling Products -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                <h2 class="text-xl font-bold text-white mb-4">Top Selling Products</h2>
+                <h2 class="text-xl font-bold text-white mb-4">Produk Terlaris</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-400">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                             <tr>
-                                <th class="px-4 py-3">Product</th>
-                                <th class="px-4 py-3">Quantity Sold</th>
-                                <th class="px-4 py-3">Revenue</th>
+                                <th class="px-4 py-3">Produk</th>
+                                <th class="px-4 py-3">Jumlah Terjual</th>
+                                <th class="px-4 py-3">Pendapatan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -121,35 +121,35 @@
 
             <!-- Report Selection -->
             <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-                <h2 class="text-xl font-bold text-white mb-4">Generate Reports</h2>
+                <h2 class="text-xl font-bold text-white mb-4">Hasilkan Laporan</h2>
 
                 <div class="space-y-4">
                     <div>
-                        <h3 class="text-lg font-medium text-white mb-2">Daily Report</h3>
+                        <h3 class="text-lg font-medium text-white mb-2">Laporan Harian</h3>
                         <form action="<?= BASEURL; ?>/admin/reports/daily" method="GET" class="flex">
                             <input type="date" name="date" value="<?= date('Y-m-d'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
-                                View
+                                Lihat
                             </button>
                         </form>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-white mb-2">Monthly Report</h3>
+                        <h3 class="text-lg font-medium text-white mb-2">Laporan Bulanan</h3>
                         <form action="<?= BASEURL; ?>/admin/reports/monthly" method="GET" class="flex">
                             <input type="month" name="month" value="<?= date('Y-m'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
-                                View
+                                Lihat
                             </button>
                         </form>
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-white mb-2">Yearly Report</h3>
+                        <h3 class="text-lg font-medium text-white mb-2">Laporan Tahunan</h3>
                         <form action="<?= BASEURL; ?>/admin/reports/yearly" method="GET" class="flex">
                             <input type="number" name="year" value="<?= date('Y'); ?>" min="2020" max="<?= date('Y'); ?>" class="bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">
-                                View
+                                Lihat
                             </button>
                         </form>
                     </div>

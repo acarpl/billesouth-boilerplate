@@ -122,4 +122,14 @@ class Table_model {
         $this->db->execute();
         return $this->db->rowCount() > 0;
     }
+
+    // Method untuk mendapatkan meja yang tersedia berdasarkan cabang
+    public function getAvailableTablesByBranch($branch_id) {
+        $this->db->query("SELECT t.*, b.branch_name
+                          FROM " . $this->table . " t
+                          LEFT JOIN branches b ON t.branch_id = b.id
+                          WHERE t.branch_id = :id AND t.status = 'Available'");
+        $this->db->bind('id', $branch_id);
+        return $this->db->resultSet();
+    }
 }
