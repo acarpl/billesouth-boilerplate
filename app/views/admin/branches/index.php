@@ -60,9 +60,9 @@
                     <?php foreach($branches as $branch): ?>
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="px-4 py-3 font-medium text-white"><?= htmlspecialchars($branch->branch_name ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->location ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->phone ?? ''); ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($branch->opening_hours ?? ''); ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($branch->address ?? ''); ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($branch->phone_wa ?? ''); ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($branch->is_active ? 'Open' : 'Closed'); ?></td>
                         <td class="px-4 py-3">
                             <div class="flex space-x-2">
                                 <a href="<?= BASEURL; ?>/admin/branches/edit/<?= $branch->id; ?>" class="text-blue-500 hover:text-blue-400">

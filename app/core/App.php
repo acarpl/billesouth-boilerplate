@@ -5,50 +5,53 @@ class App {
     protected $method = 'index';     // Method default
     protected $params = [];          // Parameter default
 
-    public function __construct() {
+    public function __construct()
+    {
         $url = $this->parseURL();
-        $subdir = null; // Initialize subdirectory variable
+        // var_dump($url); // Debug: lihat hasil parse URL
+        $subdir = null;
 
         // 1. SET CONTROLLER
         if (isset($url[0])) {
-            // Check if it's a subdirectory controller (like admin/something)
             if (isset($url[1]) && file_exists('../app/controllers/' . $url[0] . '/' . $url[1] . '.php')) {
-                // This is a subdirectory controller (e.g., /admin/bookings -> Bookings.php in admin directory)
                 $this->controller = $url[1];
                 $subdir = $url[0];
                 unset($url[0], $url[1]);
+                $url = array_values($url); // <--- PENTING
 
                 require_once '../app/controllers/' . $subdir . '/' . $this->controller . '.php';
                 $this->controller = new $this->controller;
             } elseif (file_exists('../app/controllers/' . $url[0] . '.php')) {
-                // Regular controller in main directory (e.g., /admin -> Admin.php in main directory)
                 $this->controller = $url[0];
                 unset($url[0]);
+                $url = array_values($url); // <--- PENTING
 
                 require_once '../app/controllers/' . $this->controller . '.php';
                 $this->controller = new $this->controller;
-            } else {
-                // If no controller found, keep the default
-                $this->controller = 'Home';
             }
         }
 
         // 2. SET METHOD
-        if (isset($url[1])) {
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
-                unset($url[1]);
-            }
+        if (isset($url[0]) && method_exists($this->controller, $url[0])) {
+            $this->method = $url[0];
+            unset($url[0]);
         }
 
-        // 3. SET PARAMS (Jika ada sisa URL)
-        if (!empty($url)) {
-            $this->params = array_values($url);
-        }
+        // ===== PARAMS =====
+        $this->params = $url ? array_values($url) : [];
 
-        // 4. JALANKAN CONTROLLER & METHOD SERTA KIRIM PARAMS
+        // 🔍 DEBUG DISINI
+        // var_dump([
+        //     'controller' => $this->controller,
+        //     'method' => $this->method,
+        //     'params' => $this->params
+        // ]);
+        // die;
+
+        // ===== JALANKAN =====
         call_user_func_array([$this->controller, $this->method], $this->params);
     }
+
 
     // Fungsi untuk membersihkan dan memecah URL
     public function parseURL() {

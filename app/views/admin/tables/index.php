@@ -30,7 +30,28 @@
             <p class="text-gray-400">Manage your billiard parlor tables</p>
         </div>
 
-        <div class="mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div>
+                <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
+                    <div class="relative inline-block group">
+                        <select id="branchFilter" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 pr-8 appearance-none">
+                            <option value="">All Branches</option>
+                            <?php foreach($branches as $branch): ?>
+                                <option value="<?= $branch->id; ?>" <?= ($selected_branch_id == $branch->id) ? 'selected' : ''; ?>>
+                                    <?= htmlspecialchars($branch->branch_name); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                            </svg>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <span class="text-gray-400 text-sm">Showing tables for your branch</span>
+                <?php endif; ?>
+            </div>
             <a href="<?= BASEURL; ?>/admin/tables/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
                 <i class="fas fa-plus mr-2"></i> Add New Table
             </a>
@@ -51,7 +72,7 @@
                     <tr>
                         <th class="px-4 py-3">Table #</th>
                         <th class="px-4 py-3">Branch</th>
-                        <th class="px-4 py-3">Capacity</th>
+                        <th class="px-4 py-3">Price/h</th>
                         <th class="px-4 py-3">Type</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Actions</th>
@@ -121,6 +142,23 @@ function confirmDelete(id) {
         form.submit();
     }
 }
+
+// Handle branch filter change
+document.addEventListener('DOMContentLoaded', function() {
+    const branchFilter = document.getElementById('branchFilter');
+    if (branchFilter) {
+        branchFilter.addEventListener('change', function() {
+            const selectedValue = this.value;
+            let url = new URL(window.location);
+            if (selectedValue) {
+                url.searchParams.set('branch_id', selectedValue);
+            } else {
+                url.searchParams.delete('branch_id');
+            }
+            window.location.href = url.toString();
+        });
+    }
+});
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>

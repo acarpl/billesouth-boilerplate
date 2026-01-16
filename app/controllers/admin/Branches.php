@@ -23,7 +23,6 @@ class Branches extends Controller {
 
     public function create() {
         $data['judul'] = 'Add New Branch - Bille Billiards';
-        
         $this->view('admin/branches/create', $data);
     }
 

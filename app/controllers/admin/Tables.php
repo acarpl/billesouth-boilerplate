@@ -18,10 +18,24 @@ class Tables extends Controller {
         $branchModel = $this->model('Branch_model');
 
         $data['judul'] = 'Table Management - Bille Billiards';
-        // Get branch ID from session or default to 1
-        $branch_id = $_SESSION['branch_id'] ?? 1;
-        $data['tables'] = $tableModel->getTablesByBranch($branch_id);
+
+        // Handle branch filtering for super admin
+        if ($_SESSION['user_role'] === 'super_admin') {
+            $selected_branch_id = isset($_GET['branch_id']) ? (int)$_GET['branch_id'] : null;
+            if ($selected_branch_id) {
+                $data['tables'] = $tableModel->getTablesByBranch($selected_branch_id);
+            } else {
+                // Show all tables for super admin if no branch is selected
+                $data['tables'] = $tableModel->getAll();
+            }
+        } else {
+            // Branch admins can only see tables from their own branch
+            $branch_id = $_SESSION['branch_id'] ?? 1;
+            $data['tables'] = $tableModel->getTablesByBranch($branch_id);
+        }
+
         $data['branches'] = $branchModel->getAll();
+        $data['selected_branch_id'] = $selected_branch_id ?? null;
 
         $this->view('admin/tables/index', $data);
     }

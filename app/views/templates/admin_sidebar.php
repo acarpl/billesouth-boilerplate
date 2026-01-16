@@ -12,9 +12,6 @@
             <a href="<?= BASEURL; ?>/admin/bookings" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-calendar-check w-8"></i> Reservations
             </a>
-            <a href="<?= BASEURL; ?>/admin/inventory" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-box w-8"></i> Shop / Inventory
-            </a>
 
             <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
             <div class="border-t border-gray-800 my-4"></div>
