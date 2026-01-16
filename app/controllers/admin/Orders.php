@@ -16,7 +16,7 @@ class Orders extends Controller {
     public function index() {
         $orderModel = $this->model('Order_model');
 
-        $data['judul'] = 'Order Management - Bille Billiards';
+        $data['judul'] = 'Manajemen Pesanan - Bille Billiards';
 
         // Get branch ID from session for branch admins, super admins can see all
         $branch_id = null;
@@ -32,7 +32,7 @@ class Orders extends Controller {
     public function show($id) {
         $orderModel = $this->model('Order_model');
 
-        $data['judul'] = 'Order Details - Bille Billiards';
+        $data['judul'] = 'Detail Pesanan - Bille Billiards';
 
         // Get branch ID from session for branch admins, super admins can see all
         $branch_id = null;
@@ -44,7 +44,7 @@ class Orders extends Controller {
 
         // Check if the order belongs to the current branch for branch admins
         if ($_SESSION['user_role'] === 'branch_admin' && $branch_id && $data['order']->branch_id != $branch_id) {
-            Flasher::setFlash('error', 'Order not found');
+            Flasher::setFlash('error', 'Pesanan tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/orders');
             exit;
         }
@@ -52,7 +52,7 @@ class Orders extends Controller {
         $data['order_items'] = $orderModel->getOrderItems($id);
 
         if(!$data['order']) {
-            Flasher::setFlash('error', 'Order not found');
+            Flasher::setFlash('error', 'Pesanan tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/orders');
             exit;
         }
@@ -72,13 +72,13 @@ class Orders extends Controller {
         // Check if the order belongs to the current branch for branch admins
         $order = $orderModel->getById($id);
         if ($_SESSION['user_role'] === 'branch_admin' && $branch_id && $order->branch_id != $branch_id) {
-            Flasher::setFlash('error', 'Order not found');
+            Flasher::setFlash('error', 'Pesanan tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/orders');
             exit;
         }
 
         if(empty($_POST['status'])) {
-            Flasher::setFlash('error', 'Status is required');
+            Flasher::setFlash('error', 'Status diperlukan');
             header('Location: ' . BASEURL . '/admin/orders');
             exit;
         }
@@ -86,9 +86,9 @@ class Orders extends Controller {
         $status = $_POST['status'];
 
         if($orderModel->updateStatus($id, $status)) {
-            Flasher::setFlash('success', 'Order status updated successfully');
+            Flasher::setFlash('success', 'Status pesanan berhasil diperbarui');
         } else {
-            Flasher::setFlash('error', 'Failed to update order status');
+            Flasher::setFlash('error', 'Gagal memperbarui status pesanan');
         }
 
         header('Location: ' . BASEURL . '/admin/orders');

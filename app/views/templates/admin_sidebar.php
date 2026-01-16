@@ -4,37 +4,34 @@
 
         <nav class="space-y-4">
             <a href="<?= BASEURL; ?>/admin" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-chart-line w-8"></i> Dashboard
+                <i class="fa-solid fa-chart-line w-8"></i> Dasbor
             </a>
             <a href="<?= BASEURL; ?>/admin/billing" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-stopwatch w-8"></i> Active Billing
+                <i class="fa-solid fa-stopwatch w-8"></i> Tagihan Aktif
             </a>
             <a href="<?= BASEURL; ?>/admin/bookings" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-calendar-check w-8"></i> Reservations
-            </a>
-            <a href="<?= BASEURL; ?>/admin/inventory" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-box w-8"></i> Shop / Inventory
+                <i class="fa-solid fa-calendar-check w-8"></i> Reservasi
             </a>
 
             <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
             <div class="border-t border-gray-800 my-4"></div>
             <a href="<?= BASEURL; ?>/admin/branches" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-store w-8"></i> Branches
+                <i class="fa-solid fa-store w-8"></i> Cabang
             </a>
             <a href="<?= BASEURL; ?>/admin/tables" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-table w-8"></i> Tables
+                <i class="fa-solid fa-table w-8"></i> Meja
             </a>
             <a href="<?= BASEURL; ?>/admin/products" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-boxes w-8"></i> Products
+                <i class="fa-solid fa-boxes w-8"></i> Produk
             </a>
             <a href="<?= BASEURL; ?>/admin/promos" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-percentage w-8"></i> Promos
+                <i class="fa-solid fa-percentage w-8"></i> Promo
             </a>
             <a href="<?= BASEURL; ?>/admin/orders" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-shopping-cart w-8"></i> Orders
+                <i class="fa-solid fa-shopping-cart w-8"></i> Pesanan
             </a>
             <a href="<?= BASEURL; ?>/admin/reports" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-chart-bar w-8"></i> Reports
+                <i class="fa-solid fa-chart-bar w-8"></i> Laporan
             </a>
             <?php endif; ?>
 

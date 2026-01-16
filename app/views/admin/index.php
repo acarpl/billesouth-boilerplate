@@ -30,8 +30,8 @@
         <!-- Main Content -->
         <main class="flex-1 p-8 bg-gray-950 min-h-screen">
             <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Dashboard</h1>
-                <p class="text-gray-400">Welcome back, Admin!</p>
+                <h1 class="text-3xl font-bold text-white">Dasbor</h1>
+                <p class="text-gray-400">Selamat datang kembali, Admin!</p>
             </div>
 
 
@@ -41,29 +41,29 @@
 
                     <!-- Cashier Form -->
                     <div class="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800">
-                        <h2 class="text-xl font-bold text-white mb-4">Cashier Interface</h2>
-                        <p class="text-gray-400 mb-6">Handle walk-in customers and table bookings</p>
+                        <h2 class="text-xl font-bold text-white mb-4">Antarmuka Kasir</h2>
+                        <p class="text-gray-400 mb-6">Tangani pelanggan datang langsung dan pemesanan meja</p>
 
                         <form id="cashierForm" action="<?= BASEURL; ?>/admin/bookTable" method="POST">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Customer Information -->
                                 <div class="md:col-span-2">
-                                    <h3 class="text-lg font-medium text-white mb-3">Customer Information</h3>
+                                    <h3 class="text-lg font-medium text-white mb-3">Informasi Pelanggan</h3>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="customer_name" class="block text-sm font-medium text-gray-300 mb-2">Customer Name *</label>
-                                            <input type="text" name="customer_name" id="customer_name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter customer name" required>
+                                            <label for="customer_name" class="block text-sm font-medium text-gray-300 mb-2">Nama Pelanggan *</label>
+                                            <input type="text" name="customer_name" id="customer_name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nama pelanggan" required>
                                         </div>
                                         <div>
-                                            <label for="customer_phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                                            <input type="tel" name="customer_phone" id="customer_phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Enter phone number">
+                                            <label for="customer_phone" class="block text-sm font-medium text-gray-300 mb-2">Nomor Telepon</label>
+                                            <input type="tel" name="customer_phone" id="customer_phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nomor telepon">
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Booking Details -->
                                 <div>
-                                    <label for="table_id" class="block text-sm font-medium text-gray-300 mb-2">Select Table *</label>
+                                    <label for="table_id" class="block text-sm font-medium text-gray-300 mb-2">Pilih Meja *</label>
                                     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-60 overflow-y-auto p-2 bg-gray-700 rounded-lg">
                                         <?php
                                         // Create an array of booked table IDs for quick lookup
@@ -112,39 +112,39 @@
                                 </div>
 
                                 <div>
-                                    <label for="date" class="block text-sm font-medium text-gray-300 mb-2">Date *</label>
+                                    <label for="date" class="block text-sm font-medium text-gray-300 mb-2">Tanggal *</label>
                                     <input type="date" name="date" id="date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                                 </div>
 
                                 <div>
-                                    <label for="start_time" class="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
+                                    <label for="start_time" class="block text-sm font-medium text-gray-300 mb-2">Waktu Mulai *</label>
                                     <input type="time" name="start_time" id="start_time" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
                                 </div>
 
                                 <div>
-                                    <label for="duration" class="block text-sm font-medium text-gray-300 mb-2">Duration (hours) *</label>
+                                    <label for="duration" class="block text-sm font-medium text-gray-300 mb-2">Durasi (jam) *</label>
                                     <select name="duration" id="duration" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                        <option value="1">1 hour</option>
-                                        <option value="2">2 hours</option>
-                                        <option value="3">3 hours</option>
-                                        <option value="4">4 hours</option>
-                                        <option value="5">5 hours</option>
-                                        <option value="6">6 hours</option>
-                                        <option value="7">7 hours</option>
-                                        <option value="8">8 hours</option>
+                                        <option value="1">1 jam</option>
+                                        <option value="2">2 jam</option>
+                                        <option value="3">3 jam</option>
+                                        <option value="4">4 jam</option>
+                                        <option value="5">5 jam</option>
+                                        <option value="6">6 jam</option>
+                                        <option value="7">7 jam</option>
+                                        <option value="8">8 jam</option>
                                     </select>
                                 </div>
 
                                 <div>
-                                    <label for="promo_id" class="block text-sm font-medium text-gray-300 mb-2">Promo (Optional)</label>
+                                    <label for="promo_id" class="block text-sm font-medium text-gray-300 mb-2">Promo (Opsional)</label>
                                     <select name="promo_id" id="promo_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                        <option value="">No Promo</option>
+                                        <option value="">Tanpa Promo</option>
                                         <?php foreach ($data['promos'] as $promo): ?>
                                             <option value="<?= $promo->id ?>" data-discount-type="<?= $promo->discount_type ?>" data-discount-value="<?= $promo->discount_value ?>"><?= htmlspecialchars($promo->code) ?> (<?php
                                                                                                                                                                                                                             if ($promo->discount_type === 'percentage') {
-                                                                                                                                                                                                                                echo $promo->discount_value . '% off';
+                                                                                                                                                                                                                                echo $promo->discount_value . '% diskon';
                                                                                                                                                                                                                             } else {
-                                                                                                                                                                                                                                echo 'Rp ' . number_format($promo->discount_value, 0, ',', '.') . ' off';
+                                                                                                                                                                                                                                echo 'Rp ' . number_format($promo->discount_value, 0, ',', '.') . ' diskon';
                                                                                                                                                                                                                             }
                                                                                                                                                                                                                             ?>)</option>
                                         <?php endforeach; ?>
@@ -154,7 +154,7 @@
 
                             <div class="mt-6 flex justify-end">
                                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                                    Book Table & Process Payment
+                                    Pesan Meja & Proses Pembayaran
                                 </button>
                             </div>
                         </form>
@@ -162,27 +162,27 @@
 
                     <!-- Order Summary -->
                     <div class="lg:col-span-1 bg-gray-900 rounded-lg p-6 border border-gray-800">
-                        <h2 class="text-xl font-bold text-white mb-4">Order Summary</h2>
+                        <h2 class="text-xl font-bold text-white mb-4">Ringkasan Pesanan</h2>
 
                         <div class="space-y-4">
                             <!-- Order Summary -->
                             <div class="mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <h3 class="text-lg font-medium text-white mb-3">Order Summary</h3>
+                                <h3 class="text-lg font-medium text-white mb-3">Ringkasan Pesanan</h3>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p class="text-gray-400">Table Price/Hour:</p>
+                                        <p class="text-gray-400">Harga Meja/Jam:</p>
                                         <p class="text-white font-medium" id="table-price">Rp 0</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400">Duration:</p>
-                                        <p class="text-white font-medium" id="duration-text">0 hours</p>
+                                        <p class="text-gray-400">Durasi:</p>
+                                        <p class="text-white font-medium" id="duration-text">0 jam</p>
                                     </div>
                                     <div>
                                         <p class="text-gray-400">Subtotal:</p>
                                         <p class="text-white font-medium" id="subtotal">Rp 0</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400">Discount:</p>
+                                        <p class="text-gray-400">Diskon:</p>
                                         <p class="text-white font-medium" id="discount">Rp 0</p>
                                     </div>
                                     <div class="col-span-2">
@@ -196,38 +196,38 @@
                 </div>
             <?php endif; ?>
 
-            <!-- Stats Cards -->
+            <!-- Kartu Statistik -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Total Tables</div>
+                    <div class="text-gray-400 mb-2">Total Meja</div>
                     <div class="text-3xl font-bold text-white"><?php echo count($data['tables']); ?></div>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Active Bookings</div>
+                    <div class="text-gray-400 mb-2">Pemesanan Aktif</div>
                     <div class="text-3xl font-bold text-white"><?php echo $data['active_bookings_count']; ?></div>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Total Revenue</div>
+                    <div class="text-gray-400 mb-2">Total Pendapatan</div>
                     <div class="text-3xl font-bold text-white">Rp <?php echo number_format($data['total_revenue'], 0, ',', '.'); ?></div>
                 </div>
                 <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Members</div>
+                    <div class="text-gray-400 mb-2">Anggota</div>
                     <div class="text-3xl font-bold text-white"><?php echo $data['members_count']; ?></div>
                 </div>
             </div>
 
-            <!-- Recent Activity -->
+            <!-- Aktivitas Terbaru -->
             <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                <h2 class="text-xl font-bold text-white mb-4">Recent Bookings</h2>
+                <h2 class="text-xl font-bold text-white mb-4">Pemesanan Terbaru</h2>
                 <div class="overflow-x-auto">
                     <?php if (!empty($data['recent_bookings'])): ?>
                         <table class="min-w-full divide-y divide-gray-700">
                             <thead>
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Booking ID</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Customer</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID Pemesanan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Pelanggan</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Jumlah</th>
                                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
@@ -255,7 +255,7 @@
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p class="text-gray-400">No recent bookings found.</p>
+                        <p class="text-gray-400">Tidak ada pemesanan terbaru ditemukan.</p>
                     <?php endif; ?>
                 </div>
             </div>

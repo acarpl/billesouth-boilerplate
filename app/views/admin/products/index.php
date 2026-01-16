@@ -26,13 +26,13 @@
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Product Management</h1>
-            <p class="text-gray-400">Manage your billiard parlor products and inventory</p>
+            <h1 class="text-3xl font-bold text-white">Manajemen Produk</h1>
+            <p class="text-gray-400">Kelola produk dan inventaris tempat biliar Anda</p>
         </div>
 
         <div class="mb-6">
             <a href="<?= BASEURL; ?>/admin/products/create" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i> Add New Product
+                <i class="fas fa-plus mr-2"></i> Tambah Produk Baru
             </a>
         </div>
 
@@ -49,12 +49,12 @@
             <table class="w-full text-sm text-left text-gray-400">
                 <thead class="text-xs text-gray-500 uppercase bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3">Image</th>
-                        <th class="px-4 py-3">Name</th>
-                        <th class="px-4 py-3">Category</th>
-                        <th class="px-4 py-3">Price</th>
-                        <th class="px-4 py-3">Stock</th>
-                        <th class="px-4 py-3">Actions</th>
+                        <th class="px-4 py-3">Gambar</th>
+                        <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Kategori</th>
+                        <th class="px-4 py-3">Harga</th>
+                        <th class="px-4 py-3">Stok</th>
+                        <th class="px-4 py-3">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,9 +73,9 @@
                         <td class="px-4 py-3">
                             <span class="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-500">
                                 <?php
-                                    if($product->category_id == 1): echo 'Merchandise';
-                                    elseif($product->category_id == 2): echo 'F&B';
-                                    else: echo 'Unknown';
+                                    if($product->category_id == 1): echo 'Barang Dagangan';
+                                    elseif($product->category_id == 2): echo 'Makanan & Minuman';
+                                    else: echo 'Tidak Diketahui';
                                     endif;
                                 ?>
                             </span>
@@ -90,7 +90,7 @@
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= $stock; ?> left
+                                <?= $stock; ?> tersisa
                             </span>
                         </td>
                         <td class="px-4 py-3">
@@ -110,7 +110,7 @@
             
             <?php if(empty($products)): ?>
                 <div class="text-center py-8 text-gray-500">
-                    <p>No products found. <a href="<?= BASEURL; ?>/admin/products/create" class="text-blue-500 hover:underline">Add your first product</a>.</p>
+                    <p>Tidak ada produk ditemukan. <a href="<?= BASEURL; ?>/admin/products/create" class="text-blue-500 hover:underline">Tambahkan produk pertama Anda</a>.</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -119,7 +119,7 @@
 
 <script>
 function confirmDelete(id) {
-    if(confirm('Are you sure you want to delete this product?')) {
+    if(confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
         // Create a form and submit it to delete the product
         const form = document.createElement('form');
         form.method = 'POST';

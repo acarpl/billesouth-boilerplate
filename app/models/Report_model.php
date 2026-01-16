@@ -79,6 +79,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE DATE(created_at) = :date AND branch_id = :branch_id
+                GROUP BY DATE(created_at)
             ");
             $this->db->bind('date', $date);
             $this->db->bind('branch_id', $branch_id);
@@ -91,6 +92,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE DATE(created_at) = :date
+                GROUP BY DATE(created_at)
             ");
             $this->db->bind('date', $date);
         }
@@ -133,6 +135,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE DATE_FORMAT(created_at, '%Y-%m') = :month AND branch_id = :branch_id
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ");
             $this->db->bind('month', $month);
             $this->db->bind('branch_id', $branch_id);
@@ -145,6 +148,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE DATE_FORMAT(created_at, '%Y-%m') = :month
+                GROUP BY DATE_FORMAT(created_at, '%Y-%m')
             ");
             $this->db->bind('month', $month);
         }
@@ -193,6 +197,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE YEAR(created_at) = :year AND branch_id = :branch_id
+                GROUP BY YEAR(created_at)
             ");
             $this->db->bind('year', $year);
             $this->db->bind('branch_id', $branch_id);
@@ -205,6 +210,7 @@ class Report_model {
                     AVG(grand_total) as average_order_value
                 FROM orders
                 WHERE YEAR(created_at) = :year
+                GROUP BY YEAR(created_at)
             ");
             $this->db->bind('year', $year);
         }

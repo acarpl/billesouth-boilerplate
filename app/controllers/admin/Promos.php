@@ -16,15 +16,15 @@ class Promos extends Controller {
     public function index() {
         $promoModel = $this->model('Promo_model');
 
-        $data['judul'] = 'Promo Management - Bille Billiards';
+        $data['judul'] = 'Manajemen Promo - Bille Billiards';
         $data['promos'] = $promoModel->getAll();
 
         $this->view('admin/promos/index', $data);
     }
 
     public function create() {
-        $data['judul'] = 'Add New Promo - Bille Billiards';
-        
+        $data['judul'] = 'Tambah Promo Baru - Bille Billiards';
+
         $this->view('admin/promos/create', $data);
     }
 
@@ -33,14 +33,14 @@ class Promos extends Controller {
 
         // Validate input
         if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
-            Flasher::setFlash('error', 'Code, discount type, discount value, and validity dates are required');
+            Flasher::setFlash('error', 'Kode, jenis diskon, nilai diskon, dan tanggal validasi diperlukan');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
 
         // Validate discount value based on type
         if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
-            Flasher::setFlash('error', 'Percentage discount cannot exceed 100%');
+            Flasher::setFlash('error', 'Diskon persentase tidak boleh melebihi 100%');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
@@ -61,9 +61,9 @@ class Promos extends Controller {
         ];
 
         if($promoModel->create($data)) {
-            Flasher::setFlash('success', 'Promo added successfully');
+            Flasher::setFlash('success', 'Promo berhasil ditambahkan');
         } else {
-            Flasher::setFlash('error', 'Failed to add promo');
+            Flasher::setFlash('error', 'Gagal menambahkan promo');
         }
 
         header('Location: ' . BASEURL . '/admin/promos');
@@ -72,16 +72,16 @@ class Promos extends Controller {
 
     public function edit($id) {
         $promoModel = $this->model('Promo_model');
-        
+
         $data['judul'] = 'Edit Promo - Bille Billiards';
         $data['promo'] = $promoModel->getById($id);
-        
+
         if(!$data['promo']) {
-            Flasher::setFlash('error', 'Promo not found');
+            Flasher::setFlash('error', 'Promo tidak ditemukan');
             header('Location: ' . BASEURL . '/admin/promos');
             exit;
         }
-        
+
         $this->view('admin/promos/edit', $data);
     }
 
@@ -90,14 +90,14 @@ class Promos extends Controller {
 
         // Validate input
         if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
-            Flasher::setFlash('error', 'Code, discount type, discount value, and validity dates are required');
+            Flasher::setFlash('error', 'Kode, jenis diskon, nilai diskon, dan tanggal validasi diperlukan');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
 
         // Validate discount value based on type
         if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
-            Flasher::setFlash('error', 'Percentage discount cannot exceed 100%');
+            Flasher::setFlash('error', 'Diskon persentase tidak boleh melebihi 100%');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
@@ -118,9 +118,9 @@ class Promos extends Controller {
         ];
 
         if($promoModel->update($id, $data)) {
-            Flasher::setFlash('success', 'Promo updated successfully');
+            Flasher::setFlash('success', 'Promo berhasil diperbarui');
         } else {
-            Flasher::setFlash('error', 'Failed to update promo');
+            Flasher::setFlash('error', 'Gagal memperbarui promo');
         }
 
         header('Location: ' . BASEURL . '/admin/promos');
@@ -129,13 +129,13 @@ class Promos extends Controller {
 
     public function destroy($id) {
         $promoModel = $this->model('Promo_model');
-        
+
         if($promoModel->delete($id)) {
-            Flasher::setFlash('success', 'Promo deleted successfully');
+            Flasher::setFlash('success', 'Promo berhasil dihapus');
         } else {
-            Flasher::setFlash('error', 'Failed to delete promo');
+            Flasher::setFlash('error', 'Gagal menghapus promo');
         }
-        
+
         header('Location: ' . BASEURL . '/admin/promos');
         exit;
     }
