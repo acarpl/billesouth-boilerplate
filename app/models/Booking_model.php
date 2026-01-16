@@ -1,4 +1,5 @@
 <?php
+
 class Booking_model {
     private $db;
 
@@ -6,154 +7,169 @@ class Booking_model {
         $this->db = new Database;
     }
 
-    // CEK KETERSEDIAAN (LOGIKA INTI)
-    public function checkAvailability($table_id, $date, $time, $duration) {
-        $start_time = $date . ' ' . $time . ':00';
-        $end_time = date('Y-m-d H:i:s', strtotime($start_time . " + $duration hours"));
-
-        $query = "SELECT COUNT(*) as total FROM bookings
-                  WHERE table_id = :table_id
-                  AND payment_status != 'Cancelled'
-                  AND (
-                      (:start_time < end_time AND :end_time > start_time)
-                  )";
-
-        $this->db->query($query);
-        $this->db->bind('table_id', $table_id);
-        $this->db->bind('start_time', $start_time);
-        $this->db->bind('end_time', $end_time);
-
-        $result = $this->db->single();
-        return ($result->total == 0); // True jika tersedia
+    public function getActiveBookings($branch_id = null) {
+    if ($branch_id === null) {
+        $branch_id = 1; 
     }
 
-    public function createBooking($data) {
-        $query = "INSERT INTO bookings (user_id, branch_id, table_id, booking_code, start_time, duration, end_time, total_price, payment_status)
-                  VALUES (:user_id, :branch_id, :table_id, :booking_code, :start_time, :duration, :end_time, :total_price, 'Unpaid')";
-
-        // Hitung end_time otomatis
-        $end_time = date('Y-m-d H:i:s', strtotime($data['start_time'] . " + " . $data['duration'] . " hours"));
-
-        $this->db->query($query);
-        $this->db->bind('user_id', $data['user_id']);
-        $this->db->bind('branch_id', $data['branch_id']);
-        $this->db->bind('table_id', $data['table_id']);
-        $this->db->bind('booking_code', $data['booking_code']);
-        $this->db->bind('start_time', $data['start_time']);
-        $this->db->bind('duration', $data['duration']);
-        $this->db->bind('end_time', $end_time);
-        $this->db->bind('total_price', $data['total_price']);
-
-        $this->db->execute();
-        return $this->db->rowCount();
+    $query = "SELECT table_id FROM bookings 
+              WHERE branch_id = :branch_id 
+              AND payment_status != 'Cancelled' 
+              AND NOW() BETWEEN start_time AND end_time";
+    
+    $this->db->query($query);
+    $this->db->bind('branch_id', $branch_id);
+    return $this->db->resultSet();
     }
 
-    public function createWalkInBooking($data) {
-        $query = "INSERT INTO bookings (user_id, branch_id, table_id, booking_code, start_time, duration, end_time, total_price, customer_name, customer_phone, payment_status)
-                  VALUES (:user_id, :branch_id, :table_id, :booking_code, :start_time, :duration, :end_time, :total_price, :customer_name, :customer_phone, :payment_status)";
-
-        // Hitung end_time otomatis
-        $end_time = date('Y-m-d H:i:s', strtotime($data['start_time'] . " + " . $data['duration'] . " hours"));
-
-        $this->db->query($query);
-        $this->db->bind('user_id', $data['user_id']);
-        $this->db->bind('branch_id', $data['branch_id']);
-        $this->db->bind('table_id', $data['table_id']);
-        $this->db->bind('booking_code', $data['booking_code']);
-        $this->db->bind('start_time', $data['start_time']);
-        $this->db->bind('duration', $data['duration']);
-        $this->db->bind('end_time', $end_time);
-        $this->db->bind('total_price', $data['total_price']);
-        $this->db->bind('customer_name', $data['customer_name']);
-        $this->db->bind('customer_phone', $data['customer_phone']);
-        $this->db->bind('payment_status', $data['payment_status'] ?? 'Unpaid');
-
-        $this->db->execute();
-        return $this->db->rowCount();
+    public function getTotalRevenue($branch_id = null) {
+    // Kita hanya menghitung yang statusnya 'Paid' atau 'Finished'
+    $query = "SELECT SUM(total_price) as total FROM bookings WHERE payment_status = 'Paid'";
+    
+    if ($branch_id) {
+        $query .= " AND branch_id = :branch_id";
     }
 
-    public function updatePaymentStatus($booking_code, $payment_status, $payment_method) {
-        $this->db->query("UPDATE bookings SET payment_status = :payment_status, payment_method = :payment_method WHERE booking_code = :booking_code");
-        $this->db->bind('payment_status', $payment_status);
-        $this->db->bind('payment_method', $payment_method);
-        $this->db->bind('booking_code', $booking_code);
+    $this->db->query($query);
+    
+    if ($branch_id) {
+        $this->db->bind('branch_id', $branch_id);
+    }
 
-        $this->db->execute();
-        return $this->db->rowCount() > 0;
+    $result = $this->db->single();
+    
+    // Jika hasilnya NULL (belum ada transaksi), kembalikan 0
+    return $result->total ? $result->total : 0;
     }
 
     public function getTotalBookings($branch_id = null) {
-        if ($branch_id) {
-            $this->db->query("SELECT COUNT(*) as total FROM bookings WHERE branch_id = :branch_id");
-            $this->db->bind('branch_id', $branch_id);
-        } else {
-            $this->db->query("SELECT COUNT(*) as total FROM bookings");
-        }
-        $result = $this->db->single();
-        return $result->total;
+    $query = "SELECT COUNT(*) as total FROM bookings";
+    
+    if ($branch_id) {
+        $query .= " WHERE branch_id = :branch_id";
     }
 
+    $this->db->query($query);
+    
+    if ($branch_id) {
+        $this->db->bind('branch_id', $branch_id);
+    }
+
+    $result = $this->db->single();
+    return $result->total;
+    }
+
+    public function getRecentBookings($branch_id = null, $limit = 5) {
+    // Kita Join dengan tabel users dan tables agar datanya lengkap
+    $query = "SELECT bookings.*, users.name as user_name, tables.table_number 
+              FROM bookings 
+              JOIN users ON bookings.user_id = users.id 
+              JOIN tables ON bookings.table_id = tables.id";
+    
+    if ($branch_id) {
+        $query .= " WHERE bookings.branch_id = :branch_id";
+    }
+
+    $query .= " ORDER BY bookings.created_at DESC LIMIT :limit";
+
+    $this->db->query($query);
+    
+    if ($branch_id) {
+        $this->db->bind('branch_id', $branch_id);
+    }
+    
+    $this->db->bind('limit', $limit);
+
+    return $this->db->resultSet();
+    }
+
+    // 2. Cek ketersediaan sebelum checkout (Anti Tabrakan)
+    public function checkAvailability($table_id, $date, $start_time, $duration) {
+        $start = $date . ' ' . $start_time . ':00';
+        $end = date('Y-m-d H:i:s', strtotime($start . " + $duration hours"));
+
+        $query = "SELECT COUNT(*) as total FROM bookings 
+                  WHERE table_id = :table_id 
+                  AND payment_status != 'Cancelled'
+                  AND (
+                      (start_time < :end AND end_time > :start)
+                  )";
+        
+        $this->db->query($query);
+        $this->db->bind('table_id', $table_id);
+        $this->db->bind('start', $start);
+        $this->db->bind('end', $end);
+        
+        $result = $this->db->single();
+        return ($result->total == 0);
+    }
+
+    // 3. Simpan Booking (FIX ERROR SUBTOTAL)
+    public function createBooking($data) {
+        $start = $data['start_time'];
+        $end = date('Y-m-d H:i:s', strtotime($start . " + " . $data['duration'] . " hours"));
+
+        $query = "INSERT INTO bookings (user_id, branch_id, table_id, booking_code, start_time, duration, end_time, subtotal, total_price, payment_status) 
+                  VALUES (:user_id, :branch_id, :table_id, :booking_code, :start_time, :duration, :end_time, :subtotal, :total_price, 'Unpaid')";
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $data['user_id']);
+        $this->db->bind('branch_id', $data['branch_id']);
+        $this->db->bind('table_id', $data['table_id']);
+        $this->db->bind('booking_code', $data['booking_code']);
+        $this->db->bind('start_time', $start);
+        $this->db->bind('duration', $data['duration']);
+        $this->db->bind('end_time', $end);
+        $this->db->bind('subtotal', $data['subtotal']); // Data subtotal masuk sini
+        $this->db->bind('total_price', $data['total_price']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    // 4. Ambil Detail untuk Halaman Pembayaran
     public function getBookingByCode($code) {
-        $this->db->query("SELECT * FROM bookings WHERE booking_code = :code");
+        $query = "SELECT bookings.*, tables.table_number, branches.branch_name, branches.phone_wa 
+                  FROM bookings 
+                  JOIN tables ON bookings.table_id = tables.id 
+                  JOIN branches ON bookings.branch_id = branches.id 
+                  WHERE bookings.booking_code = :code";
+        $this->db->query($query);
         $this->db->bind('code', $code);
         return $this->db->single();
     }
 
-    // Method untuk mendapatkan booking aktif
-    public function getActiveBookings($branch_id = null) {
-        if ($branch_id) {
-            $this->db->query("SELECT * FROM bookings WHERE branch_id = :branch_id AND payment_status = 'Paid' AND end_time >= NOW()");
-            $this->db->bind('branch_id', $branch_id);
-        } else {
-            $this->db->query("SELECT * FROM bookings WHERE payment_status = 'Paid' AND end_time >= NOW()");
-        }
-        return $this->db->resultSet();
-    }
-
     public function getAll($branch_id = null) {
-        if ($branch_id) {
-            $this->db->query("SELECT b.*, COALESCE(u.name, '') as customer_name, t.table_number, b.payment_status as status
-                              FROM bookings b
-                              LEFT JOIN users u ON b.user_id = u.id
-                              LEFT JOIN tables t ON b.table_id = t.id
-                              WHERE b.branch_id = :branch_id
-                              ORDER BY b.id ASC");
-            $this->db->bind('branch_id', $branch_id);
-        } else {
-            $this->db->query("SELECT b.*, COALESCE(u.name, '') as customer_name, t.table_number, b.payment_status as status
-                              FROM bookings b
-                              LEFT JOIN users u ON b.user_id = u.id
-                              LEFT JOIN tables t ON b.table_id = t.id
-                              ORDER BY b.id ASC");
-        }
-        return $this->db->resultSet();
+    // Kita gunakan JOIN agar mendapatkan Nama User dan Nomor Meja
+    $query = "SELECT bookings.*, users.name as user_name, tables.table_number, branches.branch_name 
+              FROM bookings 
+              JOIN users ON bookings.user_id = users.id 
+              JOIN tables ON bookings.table_id = tables.id 
+              JOIN branches ON bookings.branch_id = branches.id";
+    
+    // Jika ada branch_id, filter berdasarkan cabang tersebut
+    if ($branch_id) {
+        $query .= " WHERE bookings.branch_id = :branch_id";
     }
 
-    // Method untuk mendapatkan total revenue
-    public function getTotalRevenue() {
-        $this->db->query("SELECT SUM(total_price) as total_revenue FROM bookings WHERE payment_status = 'Paid'");
-        $result = $this->db->single();
-        return $result->total_revenue ? $result->total_revenue : 0;
+    // Urutkan dari yang paling baru
+    $query .= " ORDER BY bookings.created_at DESC";
+    
+    $this->db->query($query);
+    
+    if ($branch_id) {
+        $this->db->bind('branch_id', $branch_id);
     }
 
-    // Method untuk mendapatkan booking terbaru
-    public function getRecentBookings($limit = 5, $branch_id = null) {
-        if ($branch_id) {
-            $this->db->query("SELECT b.booking_code, u.name as customer_name, b.start_time, b.total_price, b.payment_status
-                              FROM bookings b
-                              JOIN users u ON b.user_id = u.id
-                              WHERE b.branch_id = :branch_id
-                              ORDER BY b.created_at DESC
-                              LIMIT :limit");
-            $this->db->bind('branch_id', $branch_id);
-        } else {
-            $this->db->query("SELECT b.booking_code, u.name as customer_name, b.start_time, b.total_price, b.payment_status
-                              FROM bookings b
-                              JOIN users u ON b.user_id = u.id
-                              ORDER BY b.created_at DESC
-                              LIMIT :limit");
-        }
-        $this->db->bind('limit', $limit);
-        return $this->db->resultSet();
+    return $this->db->resultSet();
+    }
+
+    public function updateStatusByCode($code, $status) {
+    $query = "UPDATE bookings SET payment_status = :status WHERE booking_code = :code";
+    $this->db->query($query);
+    $this->db->bind('status', $status);
+    $this->db->bind('code', $code);
+    $this->db->execute();
+    return $this->db->rowCount();
     }
 }
