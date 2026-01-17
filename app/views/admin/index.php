@@ -29,313 +29,282 @@
 
         <!-- Main Content -->
         <main class="flex-1 p-8 bg-gray-950 min-h-screen">
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-white">Dasbor</h1>
-                <p class="text-gray-400">Selamat datang kembali, Admin!</p>
-            </div>
-
-
-            <!-- Cashier Section for Branch Admins -->
+            <!-- Monitoring Meja untuk Branch Admin -->
             <?php if ($_SESSION['user_role'] === 'branch_admin'): ?>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-
-                    <!-- Cashier Form -->
-                    <div class="lg:col-span-2 bg-gray-900 rounded-lg p-6 border border-gray-800">
-                        <h2 class="text-xl font-bold text-white mb-4">Antarmuka Kasir</h2>
-                        <p class="text-gray-400 mb-6">Tangani pelanggan datang langsung dan pemesanan meja</p>
-
-                        <form id="cashierForm" action="<?= BASEURL; ?>/admin/bookTable" method="POST">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Customer Information -->
-                                <div class="md:col-span-2">
-                                    <h3 class="text-lg font-medium text-white mb-3">Informasi Pelanggan</h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="customer_name" class="block text-sm font-medium text-gray-300 mb-2">Nama Pelanggan *</label>
-                                            <input type="text" name="customer_name" id="customer_name" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nama pelanggan" required>
-                                        </div>
-                                        <div>
-                                            <label for="customer_phone" class="block text-sm font-medium text-gray-300 mb-2">Nomor Telepon</label>
-                                            <input type="tel" name="customer_phone" id="customer_phone" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" placeholder="Masukkan nomor telepon">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Booking Details -->
-                                <div>
-                                    <label for="table_id" class="block text-sm font-medium text-gray-300 mb-2">Pilih Meja *</label>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-60 overflow-y-auto p-2 bg-gray-700 rounded-lg">
-                                        <?php
-                                        // Create an array of booked table IDs for quick lookup
-                                        $booked_table_ids = [];
-                                        foreach ($data['active_bookings'] as $booking) {
-                                            $booked_table_ids[] = $booking->table_id;
-                                        }
-
-                                        foreach ($data['cashier_tables'] as $table):
-                                            $is_booked = in_array($table->id, $booked_table_ids);
-                                            $table_type_lower = strtolower($table->type);
-
-                                            // Determine classes based on table type and availability
-                                            if ($table_type_lower === 'vvip') {
-                                                if ($is_booked) {
-                                                    $box_classes = "border-2 border-purple-500 bg-gray-800"; // VVIP booked: purple outline only
-                                                } else {
-                                                    $box_classes = "bg-purple-600 text-white"; // VVIP available: purple fill
-                                                }
-                                            } elseif ($table_type_lower === 'vip') {
-                                                if ($is_booked) {
-                                                    $box_classes = "border-2 border-yellow-400 bg-gray-800"; // VIP booked: yellow outline only
-                                                } else {
-                                                    $box_classes = "bg-yellow-500 text-gray-900"; // VIP available: yellow fill
-                                                }
-                                            } else {
-                                                if ($is_booked) {
-                                                    $box_classes = "border-2 border-green-500 bg-gray-800"; // Regular booked: green outline only
-                                                } else {
-                                                    $box_classes = "bg-green-500 text-gray-900"; // Regular available: green fill
-                                                }
-                                            }
-                                        ?>
-                                            <div
-                                                class="flex flex-col items-center justify-center p-2 rounded-lg cursor-pointer <?= $box_classes ?>"
-                                                onclick="selectTable(<?= $table->id ?>, <?= $table->price_per_hour ?>)"
-                                                data-table-id="<?= $table->id ?>"
-                                                data-price="<?= $table->price_per_hour ?>">
-                                                <div class="font-bold">#<?= $table->table_number ?></div>
-                                                <div class="text-xs mt-1"><?= ucfirst($table->type) ?></div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                    <!-- Hidden input to store selected table ID -->
-                                    <input type="hidden" name="table_id" id="table_id" required>
-                                </div>
-
-                                <div>
-                                    <label for="date" class="block text-sm font-medium text-gray-300 mb-2">Tanggal *</label>
-                                    <input type="date" name="date" id="date" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                </div>
-
-                                <div>
-                                    <label for="start_time" class="block text-sm font-medium text-gray-300 mb-2">Waktu Mulai *</label>
-                                    <input type="time" name="start_time" id="start_time" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                </div>
-
-                                <div>
-                                    <label for="duration" class="block text-sm font-medium text-gray-300 mb-2">Durasi (jam) *</label>
-                                    <select name="duration" id="duration" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5" required>
-                                        <option value="1">1 jam</option>
-                                        <option value="2">2 jam</option>
-                                        <option value="3">3 jam</option>
-                                        <option value="4">4 jam</option>
-                                        <option value="5">5 jam</option>
-                                        <option value="6">6 jam</option>
-                                        <option value="7">7 jam</option>
-                                        <option value="8">8 jam</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="promo_id" class="block text-sm font-medium text-gray-300 mb-2">Promo (Opsional)</label>
-                                    <select name="promo_id" id="promo_id" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                                        <option value="">Tanpa Promo</option>
-                                        <?php foreach ($data['promos'] as $promo): ?>
-                                            <option value="<?= $promo->id ?>" data-discount-type="<?= $promo->discount_type ?>" data-discount-value="<?= $promo->discount_value ?>"><?= htmlspecialchars($promo->code) ?> (<?php
-                                                                                                                                                                                                                            if ($promo->discount_type === 'percentage') {
-                                                                                                                                                                                                                                echo $promo->discount_value . '% diskon';
-                                                                                                                                                                                                                            } else {
-                                                                                                                                                                                                                                echo 'Rp ' . number_format($promo->discount_value, 0, ',', '.') . ' diskon';
-                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                            ?>)</option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-10">
+                        <div>
+                            <h1 class="text-3xl font-bold tracking-tighter uppercase text-white">Monitoring Meja</h1>
+                            <?php
+                            // Get branch name for display
+                            $branch_name = 'Cabang Default';
+                            if (isset($_SESSION['branch_id'])) {
+                                $branch = $this->model('Branch_model')->getBranchById($_SESSION['branch_id']);
+                                if ($branch) {
+                                    $branch_name = $branch->branch_name;
+                                }
+                            }
+                            ?>
+                            <p class="text-gray-500 text-sm uppercase tracking-widest">Cabang: <?= htmlspecialchars($branch_name) ?></p>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="bg-gray-900 border border-gray-800 p-4 rounded text-center min-w-[120px]">
+                                <span class="block text-xs text-gray-500 uppercase">Total Meja</span>
+                                <span class="text-2xl font-bold text-white"><?= count($data['tables']); ?></span>
                             </div>
-
-                            <div class="mt-6 flex justify-end">
-                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
-                                    Pesan Meja & Proses Pembayaran
-                                </button>
+                            <div class="bg-emerald-900/20 border border-emerald-500/50 p-4 rounded text-center min-w-[120px]">
+                                <span class="block text-xs text-emerald-500 uppercase">Tersedia</span>
+                                <span class="text-2xl font-bold text-emerald-500">
+                                    <?php
+                                    $count = 0;
+                                    foreach ($data['tables'] as $t) if ($t->status == 'Available') $count++;
+                                    echo $count;
+                                    ?>
+                                </span>
                             </div>
-                        </form>
+                        </div>
                     </div>
 
-                    <!-- Order Summary -->
-                    <div class="lg:col-span-1 bg-gray-900 rounded-lg p-6 border border-gray-800">
-                        <h2 class="text-xl font-bold text-white mb-4">Ringkasan Pesanan</h2>
+                    <div class="min-h-screen bg-black pt-24 pb-10 px-6">
+                        <div class="max-w-7xl mx-auto">
 
-                        <div class="space-y-4">
-                            <!-- Order Summary -->
-                            <div class="mt-6 bg-gray-800 rounded-lg p-4 border border-gray-700">
-                                <h3 class="text-lg font-medium text-white mb-3">Ringkasan Pesanan</h3>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p class="text-gray-400">Harga Meja/Jam:</p>
-                                        <p class="text-white font-medium" id="table-price">Rp 0</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400">Durasi:</p>
-                                        <p class="text-white font-medium" id="duration-text">0 jam</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400">Subtotal:</p>
-                                        <p class="text-white font-medium" id="subtotal">Rp 0</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400">Diskon:</p>
-                                        <p class="text-white font-medium" id="discount">Rp 0</p>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <p class="text-gray-400">Total:</p>
-                                        <p class="text-white font-bold text-xl" id="total">Rp 0</p>
-                                    </div>
+                            <!-- Header Dashboard -->
+                            <div class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-800 pb-8">
+                                <div>
+                                    <h1 class="text-4xl font-bold tracking-tighter text-white uppercase">Monitoring Billing</h1>
+                                    <p class="text-gray-500 text-xs tracking-[0.3em] uppercase mt-2">Cabang: <?= htmlspecialchars($branch_name) ?></p>
                                 </div>
+                                <div class="text-right mt-4 md:mt-0">
+                                    <p class="text-gray-500 text-[10px] uppercase">Waktu Server</p>
+                                    <p class="text-xl font-mono font-bold text-white"><?= date('H:i'); ?> <span class="text-xs text-gray-600">WIB</span></p>
+                                </div>
+                            </div>
+
+                            <!-- Grid Meja -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <?php foreach ($data['tables'] as $table) :
+                                    $isActive = ($table->status == 'Occupied');
+                                    $billing = $isActive ? $this->model('Billing_model')->getActiveBillingByTable($table->id) : null;
+                                ?>
+                                    <div class="relative group rounded-sm border transition-all duration-500 <?= $isActive ? 'bg-red-950/20 border-red-500/50' : 'bg-gray-900 border-gray-800' ?>">
+
+                                        <div class="p-6">
+                                            <div class="flex justify-between items-start mb-6">
+                                                <div class="flex flex-col">
+                                                    <span class="text-4xl font-black <?= $isActive ? 'text-red-500' : 'text-white/20' ?>"><?= $table->table_number ?></span>
+                                                    <span class="text-[10px] text-gray-500 uppercase tracking-widest"><?= $table->type ?></span>
+                                                </div>
+                                                <div class="flex flex-col items-end">
+                                                    <div class="w-3 h-3 rounded-full <?= $isActive ? 'bg-red-500 animate-ping' : 'bg-gray-700' ?>"></div>
+                                                    <span class="text-[9px] mt-2 font-bold uppercase <?= $isActive ? 'text-red-500' : 'text-gray-500' ?>">
+                                                        <?= $isActive ? 'In Use' : 'Ready' ?>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <?php if ($isActive && $billing) : ?>
+                                                <!-- Bagian Sesi Aktif -->
+                                                <div class="space-y-4 mb-8">
+                                                    <div>
+                                                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Durasi Bermain</p>
+                                                        <div class="text-3xl font-mono font-bold text-white billing-timer"
+                                                            data-start="<?= $billing->start_time ?>">
+                                                            00:00:00
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex justify-between text-[10px] text-gray-400 uppercase">
+                                                        <span>Mulai: <?= date('H:i', strtotime($billing->start_time)) ?></span>
+                                                        <span>Rate: <?= number_format($table->price_per_hour / 1000, 0) ?>k/h</span>
+                                                    </div>
+                                                </div>
+                                                <a href="<?= BASEURL ?>/admin/stopBilling/<?= $table->id ?>"
+                                                    onclick="return confirm('Selesaikan sesi dan hitung pembayaran?')"
+                                                    class="block w-full bg-red-600 hover:bg-red-700 text-white text-center py-3 text-xs font-bold uppercase tracking-widest transition">
+                                                    Selesaikan Sesi
+                                                </a>
+                                            <?php else : ?>
+                                                <!-- Bagian Meja Kosong -->
+                                                <div class="py-10 text-center">
+                                                    <p class="text-gray-600 text-[10px] uppercase tracking-widest italic">Meja Tersedia</p>
+                                                </div>
+                                                <a href="<?= BASEURL ?>/admin/startBilling/<?= $table->id ?>"
+                                                    class="block w-full bg-white hover:bg-gray-200 text-black text-center py-3 text-xs font-bold uppercase tracking-widest transition">
+                                                    Mulai Sesi
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+            <?php else: ?>
+                <!-- Dashboard untuk Super Admin -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white tracking-tight uppercase">BERANDA</h1>
+                    <p class="text-gray-400">Selamat datang kembali, Admin Utama</p>
+                </div>
 
-            <!-- Kartu Statistik -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Total Meja</div>
-                    <div class="text-3xl font-bold text-white"><?php echo count($data['tables']); ?></div>
-                </div>
-                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Pemesanan Aktif</div>
-                    <div class="text-3xl font-bold text-white"><?php echo $data['active_bookings_count']; ?></div>
-                </div>
-                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Total Pendapatan</div>
-                    <div class="text-3xl font-bold text-white">Rp <?php echo number_format($data['total_revenue'], 0, ',', '.'); ?></div>
-                </div>
-                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div class="text-gray-400 mb-2">Anggota</div>
-                    <div class="text-3xl font-bold text-white"><?php echo $data['members_count']; ?></div>
-                </div>
-            </div>
-
-            <!-- Aktivitas Terbaru -->
-            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                <h2 class="text-xl font-bold text-white mb-4">Pemesanan Terbaru</h2>
-                <div class="overflow-x-auto">
-                    <?php if (!empty($data['recent_bookings'])): ?>
-                        <table class="min-w-full divide-y divide-gray-700">
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID Pemesanan</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Pelanggan</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tanggal</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Jumlah</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-700">
-                                <?php foreach ($data['recent_bookings'] as $booking): ?>
-                                    <tr>
-                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-white"><?= htmlspecialchars($booking->booking_code); ?></td>
-                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-white"><?= htmlspecialchars($booking->customer_name); ?></td>
-                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-white"><?= date('M j, Y', strtotime($booking->start_time)); ?></td>
-                                        <td class="px-4 py-4 whitespace-nowrap text-sm text-white">Rp <?= number_format($booking->total_price, 0, ',', '.'); ?></td>
-                                        <td class="px-4 py-4 whitespace-nowrap text-sm">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                    <?php if ($booking->payment_status === 'Paid'): ?>
-                                        bg-green-800 text-green-200
-                                    <?php elseif ($booking->payment_status === 'Unpaid'): ?>
-                                        bg-yellow-800 text-yellow-200
-                                    <?php else: ?>
-                                        bg-red-800 text-red-200
-                                    <?php endif; ?>">
-                                                <?= ucfirst($booking->payment_status); ?>
-                                            </span>
-                                        </td>
-                                    </tr>
+                <!-- Branch Filter for Super Admin -->
+                <?php if ($_SESSION['user_role'] === 'super_admin' && !empty($data['branches'])): ?>
+                    <div class="mb-8 bg-gray-900 border border-gray-800 rounded-lg p-6 shadow">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <label class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Pilih Cabang</label>
+                            <select id="branch_filter"
+                                class="bg-gray-800 border border-gray-700 rounded px-4 py-2 text-sm text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="all" <?= (!isset($_GET['branch_id']) || $_GET['branch_id'] == 'all') ? 'selected' : '' ?>>Semua Cabang</option>
+                                <?php foreach ($data['branches'] as $branch): ?>
+                                    <option value="<?= $branch->id ?>" <?= (isset($_GET['branch_id']) && $_GET['branch_id'] == $branch->id) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($branch->branch_name) ?>
+                                    </option>
                                 <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                            </select>
+
+                            <button id="apply_branch_filter"
+                                class="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs uppercase tracking-widest transition">
+                                Terapkan
+                            </button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Statistik -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg shadow hover:-translate-y-1 hover:shadow-lg transition">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Total Meja</p>
+                        <h2 class="text-4xl font-extrabold text-white"><?= count($data['tables'] ?? []) ?></h2>
+                    </div>
+                    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg shadow hover:-translate-y-1 hover:shadow-lg transition">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Pemesanan Aktif</p>
+                        <h2 class="text-4xl font-extrabold text-white"><?= $data['active_bookings_count'] ?? 0 ?></h2>
+                    </div>
+                    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg shadow hover:-translate-y-1 hover:shadow-lg transition">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Pendapatan</p>
+                        <h2 class="text-4xl font-extrabold text-emerald-400">Rp <?= number_format($data['total_revenue'] ?? 0, 0, ',', '.') ?></h2>
+                    </div>
+                    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg shadow hover:-translate-y-1 hover:shadow-lg transition">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-1">Anggota Terdaftar</p>
+                        <h2 class="text-4xl font-extrabold text-white"><?= $data['members_count'] ?? 0 ?></h2>
+                    </div>
+                </div>
+
+                <!-- Tabel Pemesanan Terbaru -->
+                <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 shadow">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold uppercase tracking-widest">Pemesanan Terbaru</h2>
+                        <span class="text-xs text-gray-500"><?= date('d M Y') ?></span>
+                    </div>
+
+                    <?php if (!empty($data['recent_bookings'])): ?>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-gray-800">
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500">Kode</th>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500">Pelanggan</th>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500">Tanggal</th>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500">Jumlah</th>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-800">
+                                    <?php foreach ($data['recent_bookings'] as $booking): ?>
+                                        <tr class="hover:bg-gray-800 transition">
+                                            <td class="px-4 py-3"><?= htmlspecialchars($booking->booking_code) ?></td>
+                                            <td class="px-4 py-3"><?= htmlspecialchars($booking->customer_name) ?></td>
+                                            <td class="px-4 py-3"><?= date('d M Y', strtotime($booking->start_time)) ?></td>
+                                            <td class="px-4 py-3">Rp <?= number_format($booking->total_price, 0, ',', '.') ?></td>
+                                            <td class="px-4 py-3">
+                                                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide
+                        <?php if ($booking->payment_status === 'Paid'): ?>
+                            bg-emerald-600 text-emerald-50
+                        <?php elseif ($booking->payment_status === 'Unpaid'): ?>
+                            bg-yellow-600 text-yellow-50
+                        <?php else: ?>
+                            bg-red-600 text-red-50
+                        <?php endif; ?>">
+                                                    <?= ucfirst($booking->payment_status) ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     <?php else: ?>
-                        <p class="text-gray-400">Tidak ada pemesanan terbaru ditemukan.</p>
+                        <p class="text-gray-600 text-sm italic">Belum ada pemesanan terbaru.</p>
                     <?php endif; ?>
                 </div>
-            </div>
+            <?php endif; ?>
+
         </main>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
-    <script>
-        // Function to handle table selection
-        function selectTable(tableId, pricePerHour) {
-            // Update hidden input with selected table ID
-            document.getElementById('table_id').value = tableId;
+    <?php if ($_SESSION['user_role'] === 'branch_admin'): ?>
+        <!-- JavaScript Timer Real-time -->
+        <script>
+            function updateTimers() {
+                const timers = document.querySelectorAll('.billing-timer');
+                timers.forEach(timer => {
+                    const startTime = new Date(timer.dataset.start).getTime();
+                    const now = new Date().getTime();
+                    const diff = now - startTime;
 
-            // Update price display
-            document.getElementById('table-price').textContent = 'Rp ' + pricePerHour.toLocaleString('id-ID');
+                    if (diff < 0) return;
 
-            // Clear previous selections (remove selected class if we had one)
-            const tableBoxes = document.querySelectorAll('[data-table-id]');
-            tableBoxes.forEach(box => {
-                // Reset to original appearance based on availability and type
-                const boxTableId = parseInt(box.getAttribute('data-table-id'));
-                const boxPrice = parseFloat(box.getAttribute('data-price'));
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                // Find the corresponding table object to determine its type and availability
-                // This would require passing table data to JavaScript, so we'll use data attributes
-                // which are already set in the HTML
+                    const hDisplay = hours < 10 ? "0" + hours : hours;
+                    const mDisplay = minutes < 10 ? "0" + minutes : minutes;
+                    const sDisplay = seconds < 10 ? "0" + seconds : seconds;
 
-                // For now, we'll just highlight the selected table with a different style
-                if (boxTableId === tableId) {
-                    // Add a selection indicator - we'll add a thicker border
-                    box.style.border = '3px solid #3b82f6'; // Blue border for selected
-                    box.style.transform = 'scale(1.05)';
-                } else {
-                    // Reset other boxes to their original state
-                    box.style.border = '';
-                    box.style.transform = '';
-                }
-            });
-
-            // Update order summary if duration is selected
-            updateOrderSummary();
-        }
-
-        // Function to update order summary
-        function updateOrderSummary() {
-            const tablePrice = parseFloat(document.getElementById('table-price').textContent.replace(/[^\d]/g, '')) || 0;
-            const duration = parseInt(document.getElementById('duration').value) || 0;
-            const promoElement = document.getElementById('promo_id').selectedOptions[0];
-
-            let discountAmount = 0;
-            if (promoElement && promoElement.value !== '') {
-                const discountType = promoElement.getAttribute('data-discount-type');
-                const discountValue = parseFloat(promoElement.getAttribute('data-discount-value')) || 0;
-
-                if (discountType === 'percentage') {
-                    discountAmount = (tablePrice * duration * discountValue) / 100;
-                } else { // fixed amount
-                    discountAmount = discountValue;
-                }
-
-                // Make sure discount doesn't exceed subtotal
-                discountAmount = Math.min(discountAmount, tablePrice * duration);
+                    timer.innerText = hDisplay + ":" + mDisplay + ":" + sDisplay;
+                });
             }
 
-            const subtotal = tablePrice * duration;
-            const total = subtotal - discountAmount;
+            // Update setiap detik
+            setInterval(updateTimers, 1000);
+            // Jalankan langsung saat page load
+            updateTimers();
+        </script>
+    <?php else: ?>
+        <script>
+            // Handle branch filter for super admin
+            document.addEventListener('DOMContentLoaded', function() {
+                const branchFilter = document.getElementById('branch_filter');
+                const applyButton = document.getElementById('apply_branch_filter');
 
-            document.getElementById('duration-text').textContent = duration + ' hours';
-            document.getElementById('subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
-            document.getElementById('discount').textContent = 'Rp ' + discountAmount.toLocaleString('id-ID');
-            document.getElementById('total').textContent = 'Rp ' + total.toLocaleString('id-ID');
-        }
+                if (branchFilter && applyButton) {
+                    applyButton.addEventListener('click', function() {
+                        const selectedBranchId = branchFilter.value;
+                        if (selectedBranchId === 'all' || selectedBranchId === '') {
+                            // If "all" is selected or empty, reload with no specific branch (shows all)
+                            window.location.href = window.location.origin + window.location.pathname + '?branch_id=all';
+                        } else {
+                            // Redirect to the same page with the selected branch ID
+                            window.location.href = window.location.origin + window.location.pathname + '?branch_id=' + selectedBranchId;
+                        }
+                    });
 
-        // Add event listeners for duration and promo changes
-        document.getElementById('duration').addEventListener('change', updateOrderSummary);
-        document.getElementById('promo_id').addEventListener('change', updateOrderSummary);
-
-        // Initialize today's date for the date picker
-        document.getElementById('date').valueAsDate = new Date();
-    </script>
+                    // Automatically apply filter when branch is selected from dropdown
+                    branchFilter.addEventListener('change', function() {
+                        const selectedBranchId = branchFilter.value;
+                        if (selectedBranchId === 'all' || selectedBranchId === '') {
+                            // If "all" is selected or empty, reload with no specific branch (shows all)
+                            window.location.href = window.location.origin + window.location.pathname + '?branch_id=all';
+                        } else {
+                            // Redirect to the same page with the selected branch ID
+                            window.location.href = window.location.origin + window.location.pathname + '?branch_id=' + selectedBranchId;
+                        }
+                    });
+                }
+            });
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>

@@ -126,6 +126,27 @@ class Booking_model {
         return $this->db->resultSet();
     }
 
+    // Method untuk mendapatkan semua booking hari ini dari semua cabang
+    public function getAllToday() {
+        $today = date('Y-m-d');
+
+        // Query untuk mengambil booking yang tanggal start_time-nya adalah hari ini dari semua cabang
+        $query = "SELECT * FROM bookings
+                  WHERE DATE(start_time) = :today
+                  AND payment_status != 'Cancelled'";
+
+        $this->db->query($query);
+        $this->db->bind('today', $today);
+
+        return $this->db->resultSet();
+    }
+
+    // Method untuk mendapatkan semua booking aktif dari semua cabang
+    public function getAllActiveBookings() {
+        $this->db->query("SELECT * FROM bookings WHERE payment_status = 'Paid' AND end_time >= NOW()");
+        return $this->db->resultSet();
+    }
+
     public function getAll($branch_id = null) {
         if ($branch_id) {
             $this->db->query("SELECT b.*, COALESCE(u.name, '') as customer_name, t.table_number, b.payment_status as status

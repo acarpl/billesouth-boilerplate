@@ -4,10 +4,10 @@
 
         <nav class="space-y-4">
             <a href="<?= BASEURL; ?>/admin" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-chart-line w-8"></i> Dasbor
+                <i class="fa-solid fa-chart-line w-8"></i> Beranda
             </a>
             <a href="<?= BASEURL; ?>/admin/billing" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
-                <i class="fa-solid fa-stopwatch w-8"></i> Tagihan Aktif
+                <i class="fa-solid fa-stopwatch w-8"></i> Billing
             </a>
             <a href="<?= BASEURL; ?>/admin/bookings" class="flex items-center text-gray-400 hover:text-white px-2 py-2 text-sm font-medium">
                 <i class="fa-solid fa-calendar-check w-8"></i> Reservasi
