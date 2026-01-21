@@ -16,27 +16,40 @@ class Admin extends Controller {
 
     public function index()
     {
-        $branch_id = $_SESSION['branch_id'] ?? 1; // Default ke Citra Raya
+        $user_role = $_SESSION['user_role'] ?? 'member';
+
+        // Initialize selected_branch_id based on user role
+        if ($user_role === 'super_admin') {
+            // Super admin can select branch via GET parameter, default to 1 if not specified
+            $selected_branch_id = isset($_GET['branch_id']) && !empty($_GET['branch_id']) ? (int)$_GET['branch_id'] : 1;
+        } else {
+            // Branch admin uses their assigned branch
+            $selected_branch_id = $_SESSION['branch_id'] ?? 1;
+        }
+
         $data['judul'] = 'Dashboard Admin Bille';
-        $data['tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
-        $branch_id = ($_SESSION['user_role'] != 'super_admin') ? $_SESSION['branch_id'] : 1;
-        $data['active_bookings'] = $this->model('Booking_model')->getActiveBookings($branch_id);
+        $data['tables'] = $this->model('Table_model')->getTablesByBranch($selected_branch_id);
+        $data['active_bookings'] = $this->model('Booking_model')->getActiveBookings($selected_branch_id);
 
         // Ambil data statistik dari model
         $bookingModel = $this->model('Booking_model');
         $userModel = $this->model('User_model');
 
-        $data['total_revenue'] = $this->model('Booking_model')->getTotalRevenue($branch_id);
-        $data['total_bookings'] = $this->model('Booking_model')->getTotalBookings($branch_id);
+        $data['total_revenue'] = $this->model('Booking_model')->getTotalRevenue($selected_branch_id);
+        $data['total_bookings'] = $this->model('Booking_model')->getTotalBookings($selected_branch_id);
         $data['members_count'] = count($userModel->getAllMembers());
-        $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings($branch_id, 5);
+        $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings($selected_branch_id, 5);
 
         // Tambahkan data untuk cashier section (hanya untuk branch admin)
         if ($_SESSION['user_role'] === 'branch_admin') {
-            $data['active_bookings'] = $bookingModel->getActiveBookings($branch_id);
-            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
-            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
+            $data['active_bookings'] = $bookingModel->getActiveBookings($selected_branch_id);
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($selected_branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($selected_branch_id);
+
+            // Set active_bookings_count for branch admin as well
+            $data['active_bookings_count'] = count($this->model('Booking_model')->getActiveBookings($selected_branch_id));
         } else {
+            // Super admin section - handle branch selection
             // Ambil data meja berdasarkan cabang yang dipilih
             $data['tables'] = $this->model('Table_model')->getTablesByBranch($selected_branch_id);
 
@@ -54,7 +67,7 @@ class Admin extends Controller {
             $data['total_revenue'] = $result->total_revenue ? $result->total_revenue : 0;
 
             // Ambil booking terbaru berdasarkan cabang yang dipilih
-            $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings(5, $selected_branch_id);
+            $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings($selected_branch_id, 5);
 
             // Ambil data untuk antarmuka kasir (jika perlu)
             $data['active_bookings'] = $this->model('Booking_model')->getActiveBookings($selected_branch_id);
@@ -71,7 +84,7 @@ class Admin extends Controller {
 
         // $this->view('templates/header', $data);
         $this->view('admin/index', $data);
-        $this->view('templates/footer');
+        // $this->view('templates/footer');
     }
 
     // Fungsi untuk mengubah status meja (Start/Stop Billing)

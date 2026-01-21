@@ -31,7 +31,7 @@
         <?php $this->view('templates/admin_sidebar'); ?>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 bg-[#030712] min-h-screen text-white">
+        <main class="flex-1 p-8 bg-[#030712] min-h-screen text-white ml-64">
             <!-- Page Title -->
             <header class="mb-10">
                 <h1 class="text-3xl font-extrabold tracking-wide uppercase">Monitoring Billing</h1>
@@ -42,13 +42,13 @@
 
             <!-- Branch Filter -->
             <?php if ($_SESSION['user_role'] === 'super_admin' && !empty($data['branches'])): ?>
-                <div class="bg-[#0A0F1C] border border-gray-800 rounded-xl p-6 mb-10 shadow-lg">
+                <div class="bg-[#0A0F1C] rounded-xl p-6 mb-10 shadow-lg">
                     <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">
                         Filter Berdasarkan Cabang
                     </label>
                     <div class="flex flex-wrap items-center gap-3">
                         <select id="branch_filter"
-                            class="bg-[#111827] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            class="bg-[#111827] rounded-lg px-4 py-2 text-sm text-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                             <option value="all">Semua Cabang</option>
                             <?php foreach ($data['branches'] as $branch): ?>
                                 <option value="<?= $branch->id ?>"
@@ -58,11 +58,6 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
-                        <button id="apply_branch_filter"
-                            class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs uppercase tracking-widest transition">
-                            Terapkan
-                        </button>
                     </div>
                 </div>
             <?php endif; ?>
@@ -224,10 +219,9 @@
         // Initial update
         updateBillingTimers();
 
-        // Branch filter functionality
-        document.getElementById('apply_branch_filter').addEventListener('click', function() {
-            const branchSelect = document.getElementById('branch_filter');
-            const selectedBranchId = branchSelect.value;
+        // Branch filter functionality - auto-refresh when selection changes
+        document.getElementById('branch_filter').addEventListener('change', function() {
+            const selectedBranchId = this.value;
 
             let url = '<?= BASEURL ?>/admin/billing';
             if (selectedBranchId !== 'all') {

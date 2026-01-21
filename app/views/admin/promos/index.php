@@ -24,7 +24,7 @@
     <?php $this->view('templates/admin_sidebar'); ?>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
+    <main class="flex-1 p-8 bg-gray-950 min-h-screen ml-64">
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-white">Manajemen Promo</h1>
             <p class="text-gray-400">Kelola promosi dan diskon tempat biliar Anda</p>

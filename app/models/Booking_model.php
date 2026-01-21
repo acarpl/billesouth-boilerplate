@@ -141,12 +141,12 @@ class Booking_model {
 
     public function getAll($branch_id = null) {
     // Kita gunakan JOIN agar mendapatkan Nama User dan Nomor Meja
-    $query = "SELECT bookings.*, users.name as user_name, tables.table_number, branches.branch_name 
-              FROM bookings 
-              JOIN users ON bookings.user_id = users.id 
-              JOIN tables ON bookings.table_id = tables.id 
+    $query = "SELECT bookings.*, users.name as user_name, users.phone, tables.table_number, branches.branch_name
+              FROM bookings
+              JOIN users ON bookings.user_id = users.id
+              JOIN tables ON bookings.table_id = tables.id
               JOIN branches ON bookings.branch_id = branches.id";
-    
+
     // Jika ada branch_id, filter berdasarkan cabang tersebut
     if ($branch_id) {
         $query .= " WHERE bookings.branch_id = :branch_id";
@@ -154,9 +154,9 @@ class Booking_model {
 
     // Urutkan dari yang paling baru
     $query .= " ORDER BY bookings.created_at DESC";
-    
+
     $this->db->query($query);
-    
+
     if ($branch_id) {
         $this->db->bind('branch_id', $branch_id);
     }
@@ -171,5 +171,21 @@ class Booking_model {
     $this->db->bind('code', $code);
     $this->db->execute();
     return $this->db->rowCount();
+    }
+
+    public function getTodayBookings($branch_id = null) {
+        $query = "SELECT * FROM bookings WHERE DATE(created_at) = CURDATE()";
+
+        if ($branch_id) {
+            $query .= " AND branch_id = :branch_id";
+        }
+
+        $this->db->query($query);
+
+        if ($branch_id) {
+            $this->db->bind('branch_id', $branch_id);
+        }
+
+        return $this->db->resultSet();
     }
 }
