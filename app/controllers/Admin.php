@@ -14,48 +14,28 @@ class Admin extends Controller {
         }
     }
 
-    public function index() {
-        $data['judul'] = 'Dashboard Billing - Bille';
+    public function index()
+    {
+        $branch_id = $_SESSION['branch_id'] ?? 1; // Default ke Citra Raya
+        $data['judul'] = 'Dashboard Admin Bille';
+        $data['tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+        $branch_id = ($_SESSION['user_role'] != 'super_admin') ? $_SESSION['branch_id'] : 1;
+        $data['active_bookings'] = $this->model('Booking_model')->getActiveBookings($branch_id);
 
-        // Check if user is super admin to allow branch filtering
-        $user_role = $_SESSION['user_role'] ?? 'member';
-        $selected_branch_id = 1; // Default branch
-        $use_all_branches = false;
+        // Ambil data statistik dari model
+        $bookingModel = $this->model('Booking_model');
+        $userModel = $this->model('User_model');
 
-        // Allow super admin to select branch via GET parameter
-        if ($user_role === 'super_admin') {
-            if (isset($_GET['branch_id']) && !empty($_GET['branch_id']) && $_GET['branch_id'] != 'all' && $_GET['branch_id'] != '') {
-                $selected_branch_id = (int)$_GET['branch_id'];
-                $use_all_branches = false;
-            } else {
-                // If no branch is selected or empty, show data from all branches
-                $use_all_branches = true;
-            }
-        } else {
-            // For branch admins, use their assigned branch
-            $selected_branch_id = $_SESSION['branch_id'] ?? $selected_branch_id;
-            $use_all_branches = false;
-        }
+        $data['total_revenue'] = $this->model('Booking_model')->getTotalRevenue($branch_id);
+        $data['total_bookings'] = $this->model('Booking_model')->getTotalBookings($branch_id);
+        $data['members_count'] = count($userModel->getAllMembers());
+        $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings($branch_id, 5);
 
-        // Get all branches for the filter dropdown
-        $data['branches'] = $this->model('Branch_model')->getAllBranches();
-
-        // Ambil data meja berdasarkan cabang yang dipilih atau semua cabang
-        if ($use_all_branches) {
-            $data['tables'] = $this->model('Table_model')->getAll();
-            $data['total_booking'] = count($this->model('Booking_model')->getAllToday());
-            $data['active_bookings_count'] = count($this->model('Booking_model')->getAllActiveBookings());
-
-            // For total revenue, get revenue from all branches
-            $db = new Database;
-            $db->query("SELECT SUM(total_price) as total_revenue FROM bookings WHERE payment_status = 'Paid'");
-            $result = $db->single();
-            $data['total_revenue'] = $result->total_revenue ? $result->total_revenue : 0;
-
-            $data['recent_bookings'] = $this->model('Booking_model')->getRecentBookings(5, null); // null means all branches
-            $data['active_bookings'] = $this->model('Booking_model')->getAllActiveBookings();
-            $data['cashier_tables'] = $this->model('Table_model')->getAll(); // all tables from all branches
-            $data['promos'] = $this->model('Promo_model')->getAllPromos(); // all promos from all branches
+        // Tambahkan data untuk cashier section (hanya untuk branch admin)
+        if ($_SESSION['user_role'] === 'branch_admin') {
+            $data['active_bookings'] = $bookingModel->getActiveBookings($branch_id);
+            $data['cashier_tables'] = $this->model('Table_model')->getTablesByBranch($branch_id);
+            $data['promos'] = $this->model('Promo_model')->getActivePromosByBranch($branch_id);
         } else {
             // Ambil data meja berdasarkan cabang yang dipilih
             $data['tables'] = $this->model('Table_model')->getTablesByBranch($selected_branch_id);

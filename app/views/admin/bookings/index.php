@@ -25,79 +25,93 @@
 
     <!-- Main Content -->
     <main class="flex-1 p-8 bg-gray-950 min-h-screen">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Booking Management</h1>
-            <p class="text-gray-400">Manage table reservations and bookings</p>
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight">Manajemen Reservasi</h1>
+            <p class="text-gray-400">Kelola status pesanan dan cetak bukti pembayaran</p>
         </div>
+        <!-- Tombol Refresh -->
+        <a href="<?= BASEURL ?>/admin/bookings" class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+            <i class="fas fa-sync-alt"></i>
+        </a>
+    </div>
 
-        <!-- Success/Error Messages -->
-        <?php if (isset($_SESSION['flash_message'])): ?>
-            <div class="mb-6 p-4 rounded-lg <?php echo $_SESSION['flash_type'] === 'success' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'; ?> border <?php echo $_SESSION['flash_type'] === 'success' ? 'border-green-500' : 'border-red-500'; ?>">
-                <?php echo $_SESSION['flash_message']; ?>
-                <?php unset($_SESSION['flash_message']); unset($_SESSION['flash_type']); ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- Bookings Table -->
-        <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 overflow-x-auto">
-            <table class="w-full text-sm text-left text-gray-400">
-                <thead class="text-xs text-gray-500 uppercase bg-gray-800">
-                    <tr>
-                        <th class="px-4 py-3">Booking Code</th>
-                        <th class="px-4 py-3">Customer</th>
-                        <th class="px-4 py-3">Table</th>
-                        <th class="px-4 py-3">Date</th>
-                        <th class="px-4 py-3">Time</th>
-                        <th class="px-4 py-3">Duration</th>
-                        <th class="px-4 py-3">Status</th>
-                        <th class="px-4 py-3">Total</th>
-                        <th class="px-4 py-3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($bookings as $booking): ?>
-                    <tr class="border-b border-gray-800 hover:bg-gray-850">
-                        <td class="px-4 py-3 font-medium text-white">#<?= $booking->booking_code ?? ''; ?></td>
-                        <td class="px-4 py-3"><?= htmlspecialchars($booking->customer_name ?? 'N/A'); ?></td>
-                        <td class="px-4 py-3">#<?= $booking->table_number ?? $booking->table_id ?? 'N/A'; ?></td>
-                        <td class="px-4 py-3"><?= isset($booking->start_time) && !empty($booking->start_time) ? date('M d, Y', strtotime($booking->start_time)) : 'N/A'; ?></td>
-                        <td class="px-4 py-3"><?= isset($booking->start_time) && !empty($booking->start_time) ? date('H:i', strtotime($booking->start_time)) : 'N/A'; ?> - <?= isset($booking->end_time) && !empty($booking->end_time) ? date('H:i', strtotime($booking->end_time)) : 'N/A'; ?></td>
-                        <td class="px-4 py-3"><?= $booking->duration ?? 'N/A'; ?> hours</td>
-                        <td class="px-4 py-3">
-                            <span class="px-2 py-1 text-xs rounded-full
-                                <?php
-                                    $status = $booking->status ?? 'unknown';
-                                    if($status == 'confirmed' || $status == 'Paid'): echo 'bg-green-500/20 text-green-500';
-                                    elseif($status == 'pending' || $status == 'Unpaid'): echo 'bg-yellow-500/20 text-yellow-500';
-                                    else: echo 'bg-red-500/20 text-red-500';
-                                    endif;
-                                ?>">
-                                <?= ucfirst($status); ?>
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">Rp <?= number_format($booking->total_price ?? 0, 0, ',', '.'); ?></td>
-                        <td class="px-4 py-3">
-                            <div class="flex space-x-2">
-                                <a href="#" class="text-blue-500 hover:text-blue-400">
-                                    <i class="fas fa-edit"></i>
+    <!-- Tabel Reservasi -->
+    <div class="bg-gray-900 rounded-2xl border border-gray-800 overflow-hidden shadow-2xl">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-800/50 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                <tr>
+                    <th class="px-6 py-4">Kode</th>
+                    <th class="px-6 py-4">Pelanggan</th>
+                    <th class="px-6 py-4">Meja</th>
+                    <th class="px-6 py-4">Jadwal Main</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-center">Aksi Manual (ON/OFF)</th>
+                    <th class="px-6 py-4 text-right">Invoice</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+                <?php foreach($bookings as $booking): ?>
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-4 font-mono text-sm text-blue-400">#<?= $booking->booking_code; ?></td>
+                    <td class="px-6 py-4">
+                        <div class="text-white font-bold text-sm"><?= htmlspecialchars($booking->customer_name); ?></div>
+                        <div class="text-[10px] text-gray-500"><?= $booking->phone ?? '-'; ?></div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-white font-bold">#<?= $booking->table_number; ?></span>
+                        <span class="text-[10px] block text-gray-500 uppercase"><?= $booking->type ?? 'REGULAR'; ?></span>
+                    </td>
+                    <td class="px-6 py-4 text-sm">
+                        <div class="text-gray-300"><?= date('d M Y', strtotime($booking->start_time)); ?></div>
+                        <div class="text-xs text-gray-500"><?= date('H:i', strtotime($booking->start_time)); ?> - <?= date('H:i', strtotime($booking->end_time)); ?></div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-3 py-1 text-[10px] font-bold rounded-full border 
+                            <?= ($booking->payment_status == 'Paid') ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500' : 
+                               (($booking->payment_status == 'Unpaid') ? 'bg-amber-500/10 border-amber-500 text-amber-500' : 'bg-red-500/10 border-red-500 text-red-500') ?>">
+                            <?= strtoupper($booking->payment_status); ?>
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center gap-2">
+                            <?php if($booking->payment_status != 'Paid'): ?>
+                                <!-- Tombol ON (Approve/Bayar) -->
+                                <a href="<?= BASEURL ?>/admin/updateBookingStatus/<?= $booking->booking_code ?>/Paid" 
+                                   class="p-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition" title="Tandai Sudah Bayar">
+                                    <i class="fas fa-check"></i>
                                 </a>
-                                <a href="#" class="text-red-500 hover:text-red-400">
-                                    <i class="fas fa-trash"></i>
+                            <?php else: ?>
+                                <!-- Tombol OFF (Batalkan/Unpaid) -->
+                                <a href="<?= BASEURL ?>/admin/updateBookingStatus/<?= $booking->booking_code ?>/Unpaid" 
+                                   class="p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition" title="Tandai Belum Bayar">
+                                    <i class="fas fa-times"></i>
                                 </a>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-
-            <?php if(empty($bookings)): ?>
-                <div class="text-center py-8 text-gray-500">
-                    <p>No bookings found.</p>
-                </div>
-            <?php endif; ?>
-        </div>
-    </main>
+                            <?php endif; ?>
+                            
+                            <a href="<?= BASEURL ?>/admin/updateBookingStatus/<?= $booking->booking_code ?>/Cancelled" 
+                               onclick="return confirm('Batalkan pesanan ini?')"
+                               class="p-2 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white rounded-lg transition" title="Cancel Booking">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <?php if($booking->payment_status == 'Paid'): ?>
+                            <a href="<?= BASEURL ?>/admin/invoice/<?= $booking->booking_code ?>" target="_blank" 
+                               class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition">
+                                <i class="fas fa-print"></i> INVOICE
+                            </a>
+                        <?php else: ?>
+                            <span class="text-[10px] text-gray-600 italic">Menunggu Bayar</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</main>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>
