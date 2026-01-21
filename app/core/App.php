@@ -29,6 +29,10 @@ class App {
                 require_once '../app/controllers/' . $this->controller . '.php';
                 $this->controller = new $this->controller;
             }
+        } else {
+            // Load default controller
+            require_once '../app/controllers/' . $this->controller . '.php';
+            $this->controller = new $this->controller;
         }
 
         // 2. SET METHOD
@@ -49,7 +53,14 @@ class App {
         // die;
 
         // ===== JALANKAN =====
-        call_user_func_array([$this->controller, $this->method], $this->params);
+        if (is_object($this->controller) && method_exists($this->controller, $this->method)) {
+            call_user_func_array([$this->controller, $this->method], $this->params);
+        } else {
+            // Handle error: method does not exist
+            http_response_code(404);
+            echo "Error 404: Method not found.";
+            exit;
+        }
     }
 
 

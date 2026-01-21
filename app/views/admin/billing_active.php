@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,149 +15,228 @@
     <!-- Font Awesome (Ikon) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+    <!-- Bootstrap CSS for Modal -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        body { font-family: 'Montserrat', sans-serif; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white">
-<div class="flex">
-    <!-- Sidebar -->
-    <?php $this->view('templates/admin_sidebar'); ?>
+    <div class="flex">
+        <!-- Sidebar -->
+        <?php $this->view('templates/admin_sidebar'); ?>
 
-    <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Active Billing</h1>
-            <p class="text-gray-400">Monitor active tables and billing status</p>
-        </div>
+        <!-- Main Content -->
+        <main class="flex-1 p-8 bg-[#030712] min-h-screen text-white">
+            <!-- Page Title -->
+            <header class="mb-10">
+                <h1 class="text-3xl font-extrabold tracking-wide uppercase">Monitoring Billing</h1>
+                <p class="text-gray-400 text-xs mt-1 tracking-widest uppercase">
+                    Pantau semua sesi meja yang sedang berjalan
+                </p>
+            </header>
 
-        <!-- Branch Filter -->
-        <div class="mb-6">
-            <label for="branch_filter" class="block text-sm font-medium text-gray-300 mb-2">Filter by Branch:</label>
-            <?php if ($_SESSION['user_role'] === 'super_admin'): ?>
-            <select id="branch_filter" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option value="" <?= ($data['branch_id'] === null || $data['branch_id'] === '') ? 'selected' : '' ?>>All Branches</option>
-                <?php foreach($data['branches'] as $branch): ?>
-                    <option value="<?= $branch->id ?>" <?= ($data['branch_id'] == $branch->id) ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($branch->branch_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <?php else: ?>
-            <select id="branch_filter" class="bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" disabled>
-                <?php foreach($data['branches'] as $branch): ?>
-                    <option value="<?= $branch->id ?>" selected>
-                        <?= htmlspecialchars($branch->branch_name) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <small class="text-gray-400">Branch selection is only available for super admins</small>
+            <!-- Branch Filter -->
+            <?php if ($_SESSION['user_role'] === 'super_admin' && !empty($data['branches'])): ?>
+                <div class="bg-[#0A0F1C] border border-gray-800 rounded-xl p-6 mb-10 shadow-lg">
+                    <label class="block text-[10px] uppercase tracking-widest text-gray-500 mb-2">
+                        Filter Berdasarkan Cabang
+                    </label>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select id="branch_filter"
+                            class="bg-[#111827] border border-gray-700 rounded-lg px-4 py-2 text-sm text-gray-300 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            <option value="all">Semua Cabang</option>
+                            <?php foreach ($data['branches'] as $branch): ?>
+                                <option value="<?= $branch->id ?>"
+                                    <?= (isset($_GET['branch_id']) && $_GET['branch_id'] == $branch->id) ? 'selected' : '' ?>>
+
+                                    <?= htmlspecialchars($branch->branch_name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <button id="apply_branch_filter"
+                            class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs uppercase tracking-widest transition">
+                            Terapkan
+                        </button>
+                    </div>
+                </div>
             <?php endif; ?>
-        </div>
 
-        <!-- Active Tables Grid -->
-        <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
-            <h2 class="text-xl font-bold text-white mb-4">Table Status Overview</h2>
-            
-            <?php if(empty($data['tables'])): ?>
-                <p class="text-gray-400">No active tables found.</p>
-            <?php else: 
-                // Separate tables by status
-                $occupied_tables = [];
-                $available_tables = [];
-                
-                foreach($data['tables'] as $table) {
-                    if($table->table_status == 'Occupied') {
-                        $occupied_tables[] = $table;
-                    } else {
-                        $available_tables[] = $table;
+            <!-- ACTIVE BILLING -->
+            <section class="bg-[#0A0F1C] rounded-xl p-6 shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-bold uppercase tracking-widest">Sesi Aktif</h2>
+                    <span class="text-xs text-gray-400 tracking-wide">
+                        Total: <?= count($data['active_billings'] ?? []) ?>
+                    </span>
+                </div>
+
+                <?php if (!empty($data['active_billings'])): ?>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-800">
+                                    <?php foreach (['Billing', 'Cabang', 'Meja', 'Mulai', 'Durasi', 'Pengguna', 'Status'] as $th): ?>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500"><?= $th ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <?php foreach ($data['active_billings'] as $billing): ?>
+                                    <tr class="hover:bg-[#111827] transition">
+                                        <td class="px-4 py-3"><?= $billing->billing_number ?></td>
+                                        <td class="px-4 py-3"><?= $this->model('Branch_model')->getBranchById($billing->branch_id)->branch_name ?></td>
+                                        <td class="px-4 py-3">
+                                            <?php $t = $this->model('Table_model')->getTableById($billing->table_id); ?>
+                                            <?= $t->table_number ?> (<?= strtoupper($t->type) ?>)
+                                        </td>
+                                        <td class="px-4 py-3"><?= date('d M Y H:i', strtotime($billing->start_time)) ?></td>
+                                        <td class="px-4 py-3" id="duration-<?= $billing->id ?>">00:00:00</td>
+                                        <td class="px-4 py-3">
+                                            <?php
+                                            if ($billing->user_id) {
+                                                $user_model = $this->model('User_model');
+                                                $user = $user_model->getUserById($billing->user_id);
+                                                echo $user ? $user->name : 'N/A';
+                                            } else {
+                                                echo 'N/A';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest
+                                        <?= $billing->status === 'Active' ? 'bg-emerald-600 text-emerald-50' : 'bg-gray-600 text-gray-200' ?>">
+                                                <?= $billing->status ?>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <p class="text-gray-500 text-sm italic">Tidak ada sesi aktif.</p>
+                <?php endif; ?>
+            </section>
+
+            <!-- FINISHED BILLING -->
+            <section class="bg-[#0A0F1C] rounded-xl p-6 shadow-lg mt-10">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-bold uppercase tracking-widest">Sesi Selesai</h2>
+                    <span class="text-xs text-gray-400 tracking-wide">
+                        Total: <?= count($data['all_billings'] ?? []) ?>
+                    </span>
+                </div>
+                <?php if (!empty($data['all_billings'])): ?>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-gray-800">
+                                    <?php foreach (['Billing', 'Cabang', 'Meja', 'Mulai', 'selesai', 'Tipe Durasi', 'Status Pembayaran', 'Status', 'Aksi'] as $th): ?>
+                                        <th class="px-4 py-3 text-left text-[10px] uppercase tracking-widest text-gray-500"><?= $th ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-800">
+                                <?php foreach ($data['all_billings'] as $billing): ?>
+                                    <tr class="hover:bg-[#111827] transition">
+                                        <td class="px-4 py-3"><?= $billing->billing_number ?></td>
+                                        <td class="px-4 py-3"><?= $this->model('Branch_model')->getBranchById($billing->branch_id)->branch_name ?></td>
+                                        <td class="px-4 py-3">
+                                            <?php $t = $this->model('Table_model')->getTableById($billing->table_id); ?>
+                                            <?= $t->table_number ?> (<?= strtoupper($t->type) ?>)
+                                        </td>
+                                        <td class="px-4 py-3"><?= date('d M Y H:i', strtotime($billing->start_time)) ?></td>
+                                        <td class="px-4 py-3"><?= $billing->end_time ? date('d M Y H:i', strtotime($billing->end_time)) : '-' ?></td>
+                                        <td class="px-4 py-3"><?= $billing->duration_type ?></td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest
+                                            <?= $billing->payment_status === 'Paid' ? 'bg-blue-500 text-blue-50' : 'bg-orange-500 text-orange-50' ?>">
+                                                <?= $billing->payment_status ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest
+                                            <?php
+                                            if ($billing->status === 'Active'): echo 'bg-green-500 text-green-50';
+                                            elseif ($billing->status === 'Finished'): echo 'bg-blue-500 text-blue-50';
+                                            elseif ($billing->status === 'Canceled'): echo 'bg-red-500 text-red-50';
+                                            endif;
+                                            ?>">
+                                                <?= $billing->status ?>
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <button type="button" class="btn btn-sm btn-outline-info" onclick="window.location.href='<?= BASEURL ?>/admin/billing/detail/<?= $billing->id ?>'">
+                                                <i class="fas fa-eye"></i> Detail
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else: ?>
+                    <p class="text-gray-500 text-sm italic">Tidak ada sesi aktif.</p>
+                <?php endif; ?>
+            </section>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+
+    <script>
+        // Function to calculate duration in real-time
+        function updateBillingTimers() {
+            const now = new Date();
+
+            <?php foreach ($data['active_billings'] as $billing): ?>
+                const startTime<?= $billing->id ?> = new Date('<?= $billing->start_time ?>');
+                const diffMs<?= $billing->id ?> = now - startTime<?= $billing->id ?>;
+
+                if (diffMs<?= $billing->id ?> >= 0) {
+                    const diffSecs<?= $billing->id ?> = Math.floor(diffMs<?= $billing->id ?> / 1000);
+                    const hours<?= $billing->id ?> = Math.floor(diffSecs<?= $billing->id ?> / 3600);
+                    const minutes<?= $billing->id ?> = Math.floor((diffSecs<?= $billing->id ?> % 3600) / 60);
+                    const seconds<?= $billing->id ?> = diffSecs<?= $billing->id ?> % 60;
+
+                    const hDisplay<?= $billing->id ?> = hours<?= $billing->id ?> < 10 ? "0" + hours<?= $billing->id ?> : hours<?= $billing->id ?>;
+                    const mDisplay<?= $billing->id ?> = minutes<?= $billing->id ?> < 10 ? "0" + minutes<?= $billing->id ?> : minutes<?= $billing->id ?>;
+                    const sDisplay<?= $billing->id ?> = seconds<?= $billing->id ?> < 10 ? "0" + seconds<?= $billing->id ?> : seconds<?= $billing->id ?>;
+
+                    const durationElement<?= $billing->id ?> = document.getElementById('duration-<?= $billing->id ?>');
+                    if (durationElement<?= $billing->id ?>) {
+                        durationElement<?= $billing->id ?>.innerText = hDisplay<?= $billing->id ?> + ":" + mDisplay<?= $billing->id ?> + ":" + sDisplay<?= $billing->id ?>;
                     }
                 }
-            ?>
-                <!-- Occupied Tables Section -->
-                <?php if(!empty($occupied_tables)): ?>
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-red-400 mb-4 flex items-center">
-                        <i class="fas fa-user-friends mr-2"></i> Occupied Tables (<?= count($occupied_tables); ?>)
-                    </h3>
-                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                        <?php foreach($occupied_tables as $table):
-                            $table_type_lower = strtolower($table->type);
+            <?php endforeach; ?>
+        }
 
-                            // Determine classes based on table type for occupied tables (only border, no fill)
-                            if ($table_type_lower === 'vvip') {
-                                $box_classes = "border-2 border-dashed border-purple-500"; // VVIP occupied: dashed purple border
-                            } elseif ($table_type_lower === 'vip') {
-                                $box_classes = "border-2 border-dashed border-yellow-400"; // VIP occupied: dashed yellow border
-                            } else { // Regular table
-                                $box_classes = "border-2 border-dashed border-green-500"; // Regular occupied: dashed green border
-                            }
-                        ?>
-                        <div class="relative">
-                            <div class="aspect-square rounded-lg flex flex-col items-center justify-center p-2 <?= $box_classes ?>">
-                                <div class="font-bold text-sm">#<?= $table->table_number; ?></div>
-                                <div class="text-xs mt-1 text-center"><?= ucfirst($table->type); ?></div>
-                                <div class="text-xs mt-1 text-center text-red-400">
-                                    <?= ucfirst($table->table_status); ?>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-                
-                <!-- Available Tables Section -->
-                <?php if(!empty($available_tables)): ?>
-                <div>
-                    <h3 class="text-lg font-semibold text-green-400 mb-4 flex items-center">
-                        <i class="fas fa-chair mr-2"></i> Available Tables (<?= count($available_tables); ?>)
-                    </h3>
-                    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                        <?php foreach($available_tables as $table):
-                            $table_type_lower = strtolower($table->type);
+        // Update every second
+        setInterval(updateBillingTimers, 1000);
+        // Initial update
+        updateBillingTimers();
 
-                            // Determine classes based on table type for available tables
-                            if ($table_type_lower === 'vvip') {
-                                $box_classes = "bg-purple-600 text-white"; // VVIP available: purple fill
-                            } elseif ($table_type_lower === 'vip') {
-                                $box_classes = "bg-yellow-500 text-gray-900"; // VIP available: yellow fill
-                            } else { // Regular table
-                                $box_classes = "bg-green-500 text-gray-900"; // Regular available: green fill
-                            }
-                        ?>
-                        <div class="relative">
-                            <div class="aspect-square rounded-lg flex flex-col items-center justify-center p-2 <?= $box_classes ?>">
-                                <div class="font-bold text-sm">#<?= $table->table_number; ?></div>
-                                <div class="text-xs mt-1 text-center"><?= ucfirst($table->type); ?></div>
-                                <div class="text-xs mt-1 text-center text-green-200">
-                                    <?= ucfirst($table->table_status); ?>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
-                
-                <?php if(empty($occupied_tables) && empty($available_tables)): ?>
-                    <p class="text-gray-400">No tables found.</p>
-                <?php endif; ?>
-            <?php endif; ?>
-        </div>
-    </main>
-</div>
+        // Branch filter functionality
+        document.getElementById('apply_branch_filter').addEventListener('click', function() {
+            const branchSelect = document.getElementById('branch_filter');
+            const selectedBranchId = branchSelect.value;
 
-<script>
-// Hanya jalankan script ini jika pengguna adalah super admin
-<?php if ($_SESSION['user_role'] === 'super_admin'): ?>
-document.getElementById('branch_filter').addEventListener('change', function() {
-    const branchId = this.value;
-    // Redirect ke halaman billing dengan parameter GET
-    window.location.href = '<?= BASEURL; ?>/admin/billing?branch_id=' + branchId;
-});
-<?php endif; ?>
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+            let url = '<?= BASEURL ?>/admin/billing';
+            if (selectedBranchId !== 'all') {
+                url += '?branch_id=' + selectedBranchId;
+            }
+
+            window.location.href = url;
+        });
+    </script>
 </body>
+
 </html>

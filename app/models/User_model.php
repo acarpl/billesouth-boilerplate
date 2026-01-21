@@ -31,6 +31,13 @@ class User_model {
         return $this->db->rowCount();
     }
 
+    // Method untuk mendapatkan jumlah member
+    public function getMemberCount() {
+        $this->db->query("SELECT COUNT(*) as count FROM " . $this->table . " WHERE role = 'member'");
+        $result = $this->db->single();
+        return $result->count;
+    }
+
     // Method untuk mendapatkan semua member
     public function getAllMembers() {
         $this->db->query("SELECT * FROM " . $this->table . " WHERE role = 'member'");

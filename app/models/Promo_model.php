@@ -105,6 +105,15 @@ class Promo_model {
         return $this->db->resultSet();
     }
 
+    public function getAllPromos() {
+        $this->db->query("SELECT p.*, b.branch_name
+                          FROM " . $this->table . " p
+                          LEFT JOIN branches b ON p.branch_id = b.id
+                          ORDER BY p.created_at DESC");
+        $this->db->execute();
+        return $this->db->resultSet();
+    }
+
     public function incrementUsage($id) {
         $this->db->query("UPDATE " . $this->table . " SET used_count = used_count + 1 WHERE id = :id");
         $this->db->bind('id', $id);
