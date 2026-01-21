@@ -24,7 +24,7 @@
     <?php $this->view('templates/admin_sidebar'); ?>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
+    <main class="flex-1 p-8 bg-gray-950 min-h-screen ml-64">
     <div class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold text-white tracking-tight">Manajemen Reservasi</h1>
@@ -55,7 +55,7 @@
                 <tr class="hover:bg-white/[0.02] transition">
                     <td class="px-6 py-4 font-mono text-sm text-blue-400">#<?= $booking->booking_code; ?></td>
                     <td class="px-6 py-4">
-                        <div class="text-white font-bold text-sm"><?= htmlspecialchars($booking->customer_name); ?></div>
+                        <div class="text-white font-bold text-sm"><?= htmlspecialchars($booking->user_name ?? ''); ?></div>
                         <div class="text-[10px] text-gray-500"><?= $booking->phone ?? '-'; ?></div>
                     </td>
                     <td class="px-6 py-4">

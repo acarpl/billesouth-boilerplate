@@ -24,10 +24,22 @@
     <?php $this->view('templates/admin_sidebar'); ?>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-white">Laporan Pendapatan Tahunan</h1>
-            <p class="text-gray-400">Rincian pendapatan untuk <?= $year; ?></p>
+    <main class="flex-1 p-8 bg-gray-950 min-h-screen ml-64">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Laporan Pendapatan Tahunan</h1>
+                <p class="text-gray-500 text-sm uppercase tracking-widest mt-1">Rincian pendapatan untuk <?= $year ?? date('Y'); ?></p>
+            </div>
+            <div class="flex items-center gap-3 bg-gray-900/50 p-2 rounded-lg border border-gray-800">
+                <div class="text-right hidden sm:block">
+                    <p class="text-xs text-gray-500 font-bold uppercase"><?= $_SESSION['user_name']; ?></p>
+                    <p class="text-[10px] text-blue-400 uppercase tracking-tighter"><?= $_SESSION['user_role']; ?></p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-purple-600 flex items-center justify-center font-bold">
+                    <?= strtoupper(substr($_SESSION['user_name'], 0, 1)); ?>
+                </div>
+            </div>
         </div>
 
         <!-- Yearly Summary Cards -->
@@ -40,7 +52,7 @@
                     <div>
                         <p class="text-gray-400 text-sm">Total Pesanan</p>
                         <p class="text-2xl font-bold text-white">
-                            <?= $revenue_data ? $revenue_data->total_orders : 0; ?>
+                            <?= isset($revenue_data) && $revenue_data ? ($revenue_data->total_orders ?? 0) : 0; ?>
                         </p>
                     </div>
                 </div>
@@ -54,7 +66,7 @@
                     <div>
                         <p class="text-gray-400 text-sm">Total Pendapatan</p>
                         <p class="text-2xl font-bold text-white">
-                            Rp <?= $revenue_data ? number_format($revenue_data->total_revenue, 0, ',', '.') : '0'; ?>
+                            Rp <?= isset($revenue_data) && $revenue_data ? number_format($revenue_data->total_revenue ?? 0, 0, ',', '.') : '0'; ?>
                         </p>
                     </div>
                 </div>
@@ -68,7 +80,7 @@
                     <div>
                         <p class="text-gray-400 text-sm">Nilai Rata-rata Pesanan</p>
                         <p class="text-2xl font-bold text-white">
-                            Rp <?= $revenue_data ? number_format($revenue_data->average_order_value, 0, ',', '.') : '0'; ?>
+                            Rp <?= isset($revenue_data) && $revenue_data ? number_format($revenue_data->average_order_value ?? 0, 0, ',', '.') : '0'; ?>
                         </p>
                     </div>
                 </div>
@@ -82,7 +94,7 @@
                     <div>
                         <p class="text-gray-400 text-sm">Bulan Aktif</p>
                         <p class="text-2xl font-bold text-white">
-                            <?= count($monthly_breakdown); ?>
+                            <?= isset($monthly_breakdown) ? count($monthly_breakdown) : 0; ?>
                         </p>
                     </div>
                 </div>
@@ -110,15 +122,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <?php if(isset($monthly_breakdown) && is_array($monthly_breakdown)): ?>
                         <?php foreach($monthly_breakdown as $month_data): ?>
                         <tr class="border-b border-gray-800 hover:bg-gray-850">
                             <td class="px-4 py-3 font-medium text-white"><?= date('F Y', strtotime($month_data->month . '-01')); ?></td>
-                            <td class="px-4 py-3"><?= $month_data->total_orders; ?></td>
-                            <td class="px-4 py-3">Rp <?= number_format($month_data->monthly_revenue, 0, ',', '.'); ?></td>
+                            <td class="px-4 py-3"><?= $month_data->total_orders ?? 0; ?></td>
+                            <td class="px-4 py-3">Rp <?= number_format($month_data->monthly_revenue ?? 0, 0, ',', '.'); ?></td>
                         </tr>
                         <?php endforeach; ?>
-                        
-                        <?php if(empty($monthly_breakdown)): ?>
+                        <?php else: ?>
                         <tr>
                             <td colspan="3" class="px-4 py-3 text-center text-gray-500">No revenue data found for this year</td>
                         </tr>
@@ -136,44 +148,49 @@
 const months = [];
 const revenues = [];
 
+<?php if(isset($monthly_breakdown) && is_array($monthly_breakdown)): ?>
 <?php foreach($monthly_breakdown as $month_data): ?>
 months.push('<?= date('M', strtotime($month_data->month . '-01')); ?>');
-revenues.push(<?= $month_data->monthly_revenue; ?>);
+revenues.push(<?= $month_data->monthly_revenue ?? 0; ?>);
 <?php endforeach; ?>
+<?php endif; ?>
 
 // Create chart
-const ctx = document.getElementById('monthlyRevenueChart').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: months,
-        datasets: [{
-            label: 'Monthly Revenue (Rp)',
-            data: revenues,
-            backgroundColor: 'rgba(59, 130, 246, 0.5)',
-            borderColor: 'rgb(59, 130, 246)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false
-            }
+const ctx = document.getElementById('monthlyRevenueChart');
+if (ctx) {
+    const chartCtx = ctx.getContext('2d');
+    new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Monthly Revenue (Rp)',
+                data: revenues,
+                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'rgb(59, 130, 246)',
+                borderWidth: 1
+            }]
         },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    callback: function(value) {
-                        return 'Rp ' + value.toLocaleString();
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString();
+                        }
                     }
                 }
             }
         }
-    }
-});
+    });
+}
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>

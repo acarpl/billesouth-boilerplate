@@ -24,7 +24,7 @@
     <?php $this->view('templates/admin_sidebar'); ?>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 bg-gray-950 min-h-screen">
+    <main class="flex-1 p-8 bg-gray-950 min-h-screen ml-64">
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-white">Detail Pesanan</h1>
             <p class="text-gray-400">Pesanan #<?= $order->id; ?> - <?= date('d M Y H:i', strtotime($order->created_at)); ?></p>
@@ -60,9 +60,9 @@
                                             <span class="font-medium text-white"><?= htmlspecialchars($item->product_name); ?></span>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">Rp <?= number_format($item->price, 0, ',', '.'); ?></td>
+                                    <td class="px-4 py-3">Rp <?= number_format($item->price_at_purchase ?? 0, 0, ',', '.'); ?></td>
                                     <td class="px-4 py-3"><?= $item->quantity; ?></td>
-                                    <td class="px-4 py-3">Rp <?= number_format($item->subtotal, 0, ',', '.'); ?></td>
+                                    <td class="px-4 py-3">Rp <?= number_format(($item->quantity ?? 0) * ($item->price_at_purchase ?? 0), 0, ',', '.'); ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -71,10 +71,10 @@
                 </div>
 
                 <!-- Order Notes -->
-                <?php if($order->notes): ?>
+                <?php if($order->notes ?? false): ?>
                 <div class="bg-gray-900 rounded-lg p-6 border border-gray-800">
                     <h2 class="text-xl font-bold text-white mb-4">Catatan Pesanan</h2>
-                    <p class="text-gray-300"><?= htmlspecialchars($order->notes); ?></p>
+                    <p class="text-gray-300"><?= htmlspecialchars($order->notes ?? ''); ?></p>
                 </div>
                 <?php endif; ?>
             </div>
@@ -97,19 +97,19 @@
 
                         <div class="flex justify-between">
                             <span class="text-gray-400">Metode Pembayaran:</span>
-                            <span class="text-white"><?= ucfirst($order->payment_method); ?></span>
+                            <span class="text-white"><?= ucfirst($order->payment_method ?? ''); ?></span>
                         </div>
 
                         <div class="flex justify-between">
                             <span class="text-gray-400">Status Pembayaran:</span>
                             <span class="px-2 py-1 text-xs rounded-full
                                 <?php
-                                    if($order->payment_status == 'paid'): echo 'bg-green-500/20 text-green-500';
-                                    elseif($order->payment_status == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
+                                    if(($order->payment_status ?? '') == 'paid'): echo 'bg-green-500/20 text-green-500';
+                                    elseif(($order->payment_status ?? '') == 'pending'): echo 'bg-yellow-500/20 text-yellow-500';
                                     else: echo 'bg-red-500/20 text-red-500';
                                     endif;
                                 ?>">
-                                <?= ucfirst($order->payment_status); ?>
+                                <?= ucfirst($order->payment_status ?? ''); ?>
                             </span>
                         </div>
 

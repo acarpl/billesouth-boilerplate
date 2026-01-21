@@ -12,23 +12,43 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body { font-family: 'Montserrat', sans-serif; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #111827; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        .table-card:hover { transform: translateY(-2px); transition: all 0.3s ease; }
-        .glass { background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(10px); }
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111827;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 10px;
+        }
+
+        .table-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+        }
     </style>
 </head>
 
 <body class="bg-[#0b0f1a] text-gray-200">
     <div class="flex min-h-screen">
-        <!-- Sidebar -->
+        <!-- Fixed Sidebar is loaded separately -->
         <?php $this->view('templates/admin_sidebar'); ?>
 
         <!-- Main Content -->
-        <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
-            
+        <main class="flex-1 p-6 lg:p-10 overflow-y-auto ml-64">
+
             <!-- Header Section -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                 <div>
@@ -73,7 +93,7 @@
             <!-- Interface Kasir -->
             <?php if ($_SESSION['user_role'] === 'branch_admin'): ?>
                 <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-10">
-                    
+
                     <!-- Form Booking -->
                     <div class="xl:col-span-8 bg-gray-900/50 border border-gray-800 rounded-3xl p-8 glass">
                         <div class="flex items-center gap-3 mb-8">
@@ -107,7 +127,7 @@
                                     foreach ($data['cashier_tables'] as $table):
                                         $is_booked = in_array($table->id, $booked_table_ids);
                                         $type = strtolower($table->type);
-                                        
+
                                         // Styling Logic
                                         $colorClass = "border-gray-700 bg-gray-800 text-gray-400"; // Default
                                         if (!$is_booked) {
@@ -118,9 +138,9 @@
                                             $colorClass = "border-red-900/50 bg-red-900/20 text-red-800 opacity-50 cursor-not-allowed";
                                         }
                                     ?>
-                                        <div onclick="<?= $is_booked ? '' : "selectTable(this, {$table->id}, {$table->price_per_hour})" ?>" 
-                                             class="table-card flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer <?= $colorClass ?>"
-                                             data-id="<?= $table->id ?>" data-price="<?= $table->price_per_hour ?>">
+                                        <div onclick="<?= $is_booked ? '' : "selectTable(this, {$table->id}, {$table->price_per_hour})" ?>"
+                                            class="table-card flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer <?= $colorClass ?>"
+                                            data-id="<?= $table->id ?>" data-price="<?= $table->price_per_hour ?>">
                                             <span class="text-lg font-black">#<?= $table->table_number ?></span>
                                             <span class="text-[8px] font-bold uppercase"><?= $table->type ?></span>
                                         </div>
@@ -142,7 +162,7 @@
                                 <div>
                                     <label class="block text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">Durasi</label>
                                     <select name="duration" id="duration" class="w-full bg-black/50 border border-gray-800 rounded-xl p-3 text-white outline-none focus:border-blue-500" onchange="updateOrderSummary()">
-                                        <?php for($i=1; $i<=8; $i++): ?>
+                                        <?php for ($i = 1; $i <= 8; $i++): ?>
                                             <option value="<?= $i ?>"><?= $i ?> Jam</option>
                                         <?php endfor; ?>
                                     </select>
@@ -156,7 +176,7 @@
                                         <option value="">Tanpa Promo</option>
                                         <?php foreach ($data['promos'] as $promo): ?>
                                             <option value="<?= $promo->id ?>" data-type="<?= $promo->discount_type ?>" data-val="<?= $promo->discount_value ?>">
-                                                <?= $promo->code ?> (<?= $promo->discount_type == 'percentage' ? $promo->discount_value.'%' : 'Rp '.number_format($promo->discount_value,0,',','.') ?>)
+                                                <?= $promo->code ?> (<?= $promo->discount_type == 'percentage' ? $promo->discount_value . '%' : 'Rp ' . number_format($promo->discount_value, 0, ',', '.') ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -224,13 +244,12 @@
                             <?php foreach ($data['recent_bookings'] as $booking): ?>
                                 <tr class="group hover:bg-white/[0.02] transition-all">
                                     <td class="py-4 font-mono text-sm text-blue-400">#<?= $booking->booking_code ?></td>
-                                    <td class="py-4 text-sm font-bold text-white"><?= $booking->customer_name ?></td>
+                                    <td class="py-4 text-sm font-bold text-white"><?= $booking->user_name ?></td>
                                     <td class="py-4 text-sm text-gray-400"><?= date('d M Y', strtotime($booking->start_time)) ?></td>
                                     <td class="py-4 text-sm font-bold text-emerald-500">Rp <?= number_format($booking->total_price, 0, ',', '.') ?></td>
                                     <td class="py-4">
                                         <span class="px-3 py-1 text-[10px] font-bold rounded-full border
-                                            <?= $booking->payment_status === 'Paid' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500' : 
-                                               ($booking->payment_status === 'Unpaid' ? 'bg-amber-500/10 border-amber-500 text-amber-500' : 'bg-red-500/10 border-red-500 text-red-500') ?>">
+                                            <?= $booking->payment_status === 'Paid' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500' : ($booking->payment_status === 'Unpaid' ? 'bg-amber-500/10 border-amber-500 text-amber-500' : 'bg-red-500/10 border-red-500 text-red-500') ?>">
                                             <?= strtoupper($booking->payment_status) ?>
                                         </span>
                                     </td>
@@ -239,8 +258,7 @@
                         </tbody>
                     </table>
                 </div>
-            <?php endif; ?>
-
+            </div>
         </main>
     </div>
 
@@ -263,7 +281,7 @@
         function updateOrderSummary() {
             const duration = parseInt(document.getElementById('duration').value);
             const promo = document.getElementById('promo_id').selectedOptions[0];
-            
+
             let subtotal = currentPricePerHour * duration;
             let discount = 0;
 
@@ -287,4 +305,5 @@
         document.getElementById('date').valueAsDate = new Date();
     </script>
 </body>
+
 </html>
