@@ -72,7 +72,7 @@
                             <label for="image" class="block text-sm font-medium text-gray-300 mb-2">Product Image</label>
                             <?php if($product->image): ?>
                                 <div class="mb-2">
-                                    <img src="<?= BASEURL . '/../' . $product->image; ?>" alt="<?= htmlspecialchars($product->name); ?>" class="w-24 h-24 object-cover rounded">
+                                    <img src="<?= BASEURL . '/' . $product->image; ?>" alt="<?= htmlspecialchars($product->name); ?>" class="w-24 h-24 object-cover rounded">
                                 </div>
                             <?php endif; ?>
                             <input type="file" name="image" id="image" accept="image/*" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">

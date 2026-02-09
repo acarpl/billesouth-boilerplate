@@ -20,13 +20,29 @@
                 </ul>
             </div>
 
-            <!-- Branches -->
+            <!-- Locations -->
             <div>
-                <h4 class="text-white font-bold mb-4 text-sm">LOCATIONS</h4>
+                <h4 class="text-white font-bold mb-4 text-sm uppercase tracking-widest">Lokasi Kami</h4>
                 <ul class="text-gray-500 text-sm space-y-2">
-                    <li>Kelapa Gading</li>
-                    <li>BSD City</li>
-                    <li>Coming Soon: Kemang</li>
+                    <?php 
+                        // Kita panggil Database & Model langsung di sini agar muncul di semua page
+                        $db_footer = new Database();
+                        $db_footer->query("SELECT branch_name FROM branches WHERE is_active = 1 ORDER BY branch_name ASC");
+                        $footer_branches = $db_footer->resultSet();
+            
+                        if (!empty($footer_branches)) :
+                            foreach ($footer_branches as $b) : 
+                    ?>
+                        <li class="hover:text-white transition cursor-default">
+                            <i class="fa-solid fa-location-dot text-[10px] mr-2"></i> 
+                            <?= $b->branch_name; ?>
+                        </li>
+                    <?php 
+                            endforeach; 
+                        else :
+                    ?>
+                        <li class="italic text-gray-600">Segera Hadir...</li>
+                    <?php endif; ?>
                 </ul>
             </div>
 

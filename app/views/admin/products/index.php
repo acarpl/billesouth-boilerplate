@@ -62,7 +62,7 @@
                     <tr class="border-b border-gray-800 hover:bg-gray-850">
                         <td class="px-4 py-3">
                             <?php if($product->image): ?>
-                                <img src="<?= BASEURL . '/../' . $product->image; ?>" alt="<?= htmlspecialchars($product->name); ?>" class="w-12 h-12 object-cover rounded">
+                                <img src="<?= BASEURL . '/' . $product->image; ?>" alt="<?= htmlspecialchars($product->name); ?>" class="w-12 h-12 object-cover rounded">
                             <?php else: ?>
                                 <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
                                     <i class="fas fa-image text-gray-500"></i>

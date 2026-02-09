@@ -4,10 +4,7 @@
 <section class="relative h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
         <div class="absolute inset-0 bg-black/60 z-10"></div>
-        <!-- Video Background Dinamis (opsional bisa dari DB) -->
-        <video autoplay loop muted playsinline class="w-full h-full object-cover">
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-professional-billiard-player-taking-a-shot-34537-large.mp4" type="video/mp4">
-        </video>
+        <img src="public/assets/img/bille-hero.jpg" alt="">
     </div>
 
     <div class="relative z-20 text-center px-4">
@@ -52,8 +49,7 @@
 
         <div class="group relative bg-gray-900 overflow-hidden h-[550px] border border-gray-800">
             <!-- Gambar Cabang dari Database -->
-            <img src="<?= BASEURL; ?>/uploads/branches/<?= $spotlight->image; ?>" 
-                 onerror="this.src='https://images.unsplash.com/photo-1544111366-02e0878196b2?q=80&w=2070&auto=format&fit=crop'"
+            <img src="<?= BASEURL; ?>/<?= $spotlight->image; ?>"
                  class="w-full h-full object-cover opacity-50 group-hover:scale-105 transition-transform duration-1000">
             
             <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -92,8 +88,7 @@
             <div class="relative order-2 lg:order-1">
                 <div class="absolute -top-10 -left-10 w-40 h-40 border-l border-t border-gray-800"></div>
                 <!-- Foto Produk dari Database -->
-                <img src="<?= BASEURL; ?>/uploads/products/<?= $product->image; ?>" 
-                     onerror="this.src='https://images.unsplash.com/photo-1611095777215-8373f62ee8d0?q=80&w=2070&auto=format&fit=crop'"
+                <img src="<?= BASEURL; ?>/<?=$product->image; ?>"
                      class="relative z-10 w-full rounded-sm grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl">
             </div>
             <div class="order-1 lg:order-2">
