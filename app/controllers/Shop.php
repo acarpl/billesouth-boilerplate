@@ -7,6 +7,7 @@ class Shop extends Controller {
         // Get branch ID from session or default to 1
         $branch_id = $_SESSION['branch_id'] ?? 1;
         $data['products'] = $productModel->getAllForBranch($branch_id);
+        $data['categories'] = $this->model('Category_model')->getAll(); 
 
         $this->view('templates/header', $data);
         $this->view('shop/index', $data);
