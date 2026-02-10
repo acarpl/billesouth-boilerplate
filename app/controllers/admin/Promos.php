@@ -31,44 +31,54 @@ class Promos extends Controller {
     public function store() {
         $promoModel = $this->model('Promo_model');
 
-        // Validate input
-        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
-            Flasher::setFlash('error', 'Kode, jenis diskon, nilai diskon, dan tanggal validasi diperlukan');
+        if(empty($_POST['code']) ||
+        empty($_POST['discount_type']) ||
+        empty($_POST['discount_value']) ||
+        empty($_POST['start_date']) ||
+        empty($_POST['end_date'])) {
+
+            Flasher::setFlash('error', 'Data wajib belum lengkap');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
 
-        // Validate discount value based on type
-        if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
-            Flasher::setFlash('error', 'Diskon persentase tidak boleh melebihi 100%');
+        // Validasi percentage
+        if($_POST['discount_type'] === 'percentage' && (float)$_POST['discount_value'] > 100){
+            Flasher::setFlash('error', 'Diskon tidak boleh > 100%');
+            header('Location: ' . BASEURL . '/admin/promos/create');
+            exit;
+        }
+
+        // Validasi tanggal
+        if($_POST['start_date'] > $_POST['end_date']){
+            Flasher::setFlash('error', 'Tanggal mulai tidak boleh lebih besar');
             header('Location: ' . BASEURL . '/admin/promos/create');
             exit;
         }
 
         $data = [
-            'branch_id' => $_POST['branch_id'] ?? null,
-            'code' => strtoupper($_POST['code']),
+            'branch_id' => !empty($_POST['branch_id']) ? (int)$_POST['branch_id'] : null,
+            'code' => strtoupper(trim($_POST['code'])),
             'discount_type' => $_POST['discount_type'],
-            'discount_value' => $_POST['discount_value'],
-            'min_purchase' => $_POST['min_purchase'] ?? 0,
-            'max_discount' => $_POST['max_discount'] ?? 0,
+            'discount_value' => (float)$_POST['discount_value'],
+            'min_purchase' => !empty($_POST['min_purchase']) ? (float)$_POST['min_purchase'] : 0,
+            'max_discount' => !empty($_POST['max_discount']) ? (float)$_POST['max_discount'] : 0,
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
-            'usage_limit' => $_POST['usage_limit'] ?? 0,
+            'usage_limit' => !empty($_POST['usage_limit']) ? (int)$_POST['usage_limit'] : 0,
             'used_count' => 0,
             'is_active' => 1,
             'created_at' => date('Y-m-d H:i:s')
         ];
 
-        if($promoModel->create($data)) {
-            Flasher::setFlash('success', 'Promo berhasil ditambahkan');
-        } else {
-            Flasher::setFlash('error', 'Gagal menambahkan promo');
+        if(!$promoModel->create($data)){
+            die('Insert promo gagal');
         }
 
+        Flasher::setFlash('success', 'Promo berhasil ditambahkan');
         header('Location: ' . BASEURL . '/admin/promos');
-        exit;
     }
+
 
     public function edit($id) {
         $promoModel = $this->model('Promo_model');
@@ -88,43 +98,51 @@ class Promos extends Controller {
     public function update($id) {
         $promoModel = $this->model('Promo_model');
 
-        // Validate input
-        if(empty($_POST['code']) || empty($_POST['discount_type']) || empty($_POST['discount_value']) || empty($_POST['start_date']) || empty($_POST['end_date'])) {
-            Flasher::setFlash('error', 'Kode, jenis diskon, nilai diskon, dan tanggal validasi diperlukan');
+        if(empty($_POST['code']) ||
+        empty($_POST['discount_type']) ||
+        empty($_POST['discount_value']) ||
+        empty($_POST['start_date']) ||
+        empty($_POST['end_date'])) {
+
+            Flasher::setFlash('error', 'Data wajib belum lengkap');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
 
-        // Validate discount value based on type
-        if($_POST['discount_type'] === 'percentage' && $_POST['discount_value'] > 100) {
-            Flasher::setFlash('error', 'Diskon persentase tidak boleh melebihi 100%');
+        // Validasi percentage
+        if($_POST['discount_type'] === 'percentage' && (float)$_POST['discount_value'] > 100){
+            Flasher::setFlash('error', 'Diskon tidak boleh > 100%');
             header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
             exit;
         }
 
-        $isActive = isset($_POST['is_active']) ? 1 : 0;
+        // Validasi tanggal
+        if($_POST['start_date'] > $_POST['end_date']){
+            Flasher::setFlash('error', 'Tanggal mulai tidak boleh lebih besar');
+            header('Location: ' . BASEURL . '/admin/promos/edit/' . $id);
+            exit;
+        }
 
         $data = [
-            'branch_id' => $_POST['branch_id'] ?? null,
-            'code' => strtoupper($_POST['code']),
+            'branch_id' => !empty($_POST['branch_id']) ? (int)$_POST['branch_id'] : null,
+            'code' => strtoupper(trim($_POST['code'])),
             'discount_type' => $_POST['discount_type'],
-            'discount_value' => $_POST['discount_value'],
-            'min_purchase' => $_POST['min_purchase'] ?? 0,
-            'max_discount' => $_POST['max_discount'] ?? 0,
+            'discount_value' => (float)$_POST['discount_value'],
+            'min_purchase' => !empty($_POST['min_purchase']) ? (float)$_POST['min_purchase'] : 0,
+            'max_discount' => !empty($_POST['max_discount']) ? (float)$_POST['max_discount'] : 0,
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
-            'usage_limit' => $_POST['usage_limit'] ?? 0,
-            'is_active' => $isActive
+            'usage_limit' => !empty($_POST['usage_limit']) ? (int)$_POST['usage_limit'] : 0,
+            'is_active' => isset($_POST['is_active']) && $_POST['is_active'] === 'on' ? 1 : 0,
+            'updated_at' => date('Y-m-d H:i:s')
         ];
 
-        if($promoModel->update($id, $data)) {
-            Flasher::setFlash('success', 'Promo berhasil diperbarui');
-        } else {
-            Flasher::setFlash('error', 'Gagal memperbarui promo');
+        if(!$promoModel->update($id, $data)){
+            die('Update promo gagal');
         }
 
+        Flasher::setFlash('success', 'Promo berhasil diperbarui');
         header('Location: ' . BASEURL . '/admin/promos');
-        exit;
     }
 
     public function destroy($id) {

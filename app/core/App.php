@@ -8,61 +8,75 @@ class App {
     public function __construct()
     {
         $url = $this->parseURL();
-        // var_dump($url); // Debug: lihat hasil parse URL
-        $subdir = null;
 
-        // 1. SET CONTROLLER
-        if (isset($url[0])) {
-            if (isset($url[1]) && file_exists('../app/controllers/' . $url[0] . '/' . $url[1] . '.php')) {
-                $this->controller = $url[1];
+        // ================= CONTROLLER =================
+        if (!empty($url)) {
+
+            // CEK SUBFOLDER CONTROLLER
+            if (
+                isset($url[1]) &&
+                is_dir('../app/controllers/' . $url[0]) &&
+                file_exists('../app/controllers/' . $url[0] . '/' . ucfirst($url[1]) . '.php')
+            ) {
+
                 $subdir = $url[0];
-                unset($url[0], $url[1]);
-                $url = array_values($url); // <--- PENTING
+                $this->controller = ucfirst($url[1]);
 
                 require_once '../app/controllers/' . $subdir . '/' . $this->controller . '.php';
                 $this->controller = new $this->controller;
-            } elseif (file_exists('../app/controllers/' . $url[0] . '.php')) {
-                $this->controller = $url[0];
-                unset($url[0]);
-                $url = array_values($url); // <--- PENTING
+
+                array_shift($url); // hapus folder
+                array_shift($url); // hapus controller
+            }
+
+            // CEK CONTROLLER ROOT
+            elseif (file_exists('../app/controllers/' . ucfirst($url[0]) . '.php')) {
+
+                $this->controller = ucfirst($url[0]);
 
                 require_once '../app/controllers/' . $this->controller . '.php';
                 $this->controller = new $this->controller;
+
+                array_shift($url);
             }
+
+            else {
+                $this->loadDefaultController();
+            }
+
         } else {
-            // Load default controller
-            require_once '../app/controllers/' . $this->controller . '.php';
-            $this->controller = new $this->controller;
+            $this->loadDefaultController();
         }
 
-        // 2. SET METHOD
-        if (isset($url[0]) && method_exists($this->controller, $url[0])) {
+        // ================= METHOD =================
+        if (!empty($url) && method_exists($this->controller, $url[0])) {
             $this->method = $url[0];
-            unset($url[0]);
+            array_shift($url);
         }
 
-        // ===== PARAMS =====
-        $this->params = $url ? array_values($url) : [];
+        // ================= PARAMS =================
+        $this->params = $url ?? [];
 
-        // 🔍 DEBUG DISINI
-        // var_dump([
-        //     'controller' => $this->controller,
-        //     'method' => $this->method,
-        //     'params' => $this->params
-        // ]);
+        // DEBUG
+        var_dump([
+            'controller' => $this->controller,
+            'method' => $this->method,
+            'params' => $this->params
+        ]);
         // die;
 
-        // ===== JALANKAN =====
-        if (is_object($this->controller) && method_exists($this->controller, $this->method)) {
-            call_user_func_array([$this->controller, $this->method], $this->params);
-        } else {
-            // Handle error: method does not exist
-            http_response_code(404);
-            echo "Error 404: Method not found.";
-            exit;
-        }
+        call_user_func_array([$this->controller, $this->method], $this->params);
     }
 
+    public function loadDefaultController() {
+        require_once '../app/controllers/' . $this->controller . '.php';
+        $this->controller = new $this->controller;
+    }
+
+    public function loadModel($model) {
+        require_once '../app/models/' . $model . '.php';
+        return new $model;
+    }
 
     // Fungsi untuk membersihkan dan memecah URL
     public function parseURL() {
